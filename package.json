@@ -1,6 +1,6 @@
 {
   "name": "meta-controller",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "meta-controller",
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
