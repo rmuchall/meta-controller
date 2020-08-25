@@ -1,0 +1,57 @@
+{
+  "name": "meta-controller",
+  "version": "0.0.16",
+  "description": "meta-controller",
+  "main": "./cjs/index.js",
+  "module": "./esm/index.js",
+  "types": "./types/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rimraf ./build",
+    "lint": "eslint --config ./.eslintrc.js --ext .ts ./src ./test",
+    "test": "jest --coverage",
+    "build": "npm run clean && npm rum build:cjs && npm run build:esm && npm run build:es2015",
+    "build:cjs": "tsc --project tsconfig.release.json --module commonjs --target es5 --outDir build/cjs",
+    "build:esm": "tsc --project tsconfig.release.json --module es2015 --target es5 --outDir build/esm",
+    "build:es2015": "tsc --project tsconfig.release.json --module es2015 --target es2015 --outDir build/es2015",
+    "copy": "cpy ./package.json ./README.md ./LICENSE.md ./build",
+    "postversion": "git push && git push --tags",
+    "release": "npm run lint && npm run test && npm run build && npm version patch && npm run copy && npm publish ./build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmuchall/meta-controller.git"
+  },
+  "keywords": [],
+  "author": "Rob Muchall <rmuchall@protonmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rmuchall/meta-controller/issues"
+  },
+  "homepage": "https://github.com/rmuchall/meta-controller#readme",
+  "devDependencies": {
+    "@types/cors": "2.8.7",
+    "@types/express": "4.17.7",
+    "@types/jest": "26.0.10",
+    "@types/node": "14.6.0",
+    "@typescript-eslint/eslint-plugin": "3.10.1",
+    "@typescript-eslint/parser": "3.10.1",
+    "cpy-cli": "3.1.1",
+    "eslint": "7.7.0",
+    "jest": "26.4.2",
+    "ky": "0.23.0",
+    "ky-universal": "0.8.1",
+    "rimraf": "3.0.2",
+    "ts-jest": "26.2.0",
+    "ts-node": "9.0.0",
+    "typescript": "3.9.7"
+  },
+  "dependencies": {
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "http-status-ts": "0.0.3",
+    "meta-transformer": "0.0.14",
+    "meta-validator": "0.0.36",
+    "reflect-metadata": "0.1.13"
+  }
+}
