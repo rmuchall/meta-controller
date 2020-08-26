@@ -2,6 +2,7 @@ import {AuthorizationHandler, CurrentUserHandler, ErrorHandler, MiddlewareHandle
 import {ClassType} from "meta-transformer";
 
 export interface Options {
+    isDebug?: boolean;
     routePrefix?: string;
     isUseCors?: boolean;
     controllerClassTypes: ClassType[];

@@ -42,16 +42,16 @@
     "ky": "0.23.0",
     "ky-universal": "0.8.1",
     "rimraf": "3.0.2",
-    "ts-jest": "26.2.0",
+    "ts-jest": "26.3.0",
     "ts-node": "9.0.0",
-    "typescript": "3.9.7"
+    "typescript": "4.0.2"
   },
   "dependencies": {
     "cors": "2.8.5",
     "express": "4.17.1",
     "http-status-ts": "0.0.3",
-    "meta-transformer": "0.0.14",
-    "meta-validator": "0.0.36",
+    "meta-transformer": "0.0.15",
+    "meta-validator": "0.0.37",
     "reflect-metadata": "0.1.13"
   }
 }

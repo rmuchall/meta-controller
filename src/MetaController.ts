@@ -225,9 +225,12 @@ export class MetaController {
 
         return Promise.all(parameterHandlers);
     }
-
+    
     private static defaultErrorHandler(error: any, request: Request, response: Response, next: Function): void {
-        // console.error(error);
+        if (MetaController.options.isDebug) {
+            console.error(error);
+        }
+
         if (error.statusCode) {
             response.status(error.statusCode);
         } else {
