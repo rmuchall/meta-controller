@@ -4,7 +4,7 @@ import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
 import {Body} from "../src/decorators/parameter/Body";
-import {kyi} from "./utilities/create-kyi";
+import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
 import {HttpError} from "../src/models/HttpError";
 
@@ -71,7 +71,7 @@ afterAll((done) => apiServer.close(done));
 
 test("sync from nodejs", async () => {
     expect.assertions(4);
-    const response = await kyi("http://localhost:4500/error-test/throw-sync-nodejs", {method: "GET"});
+    const response = await unifiedFetch.get("/error-test/throw-sync-nodejs");
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -81,7 +81,7 @@ test("sync from nodejs", async () => {
 
 test("async from nodejs", async () => {
     expect.assertions(4);
-    const response = await kyi("http://localhost:4500/error-test/throw-async-nodejs", {method: "GET"});
+    const response = await unifiedFetch.get("/error-test/throw-async-nodejs");
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -91,7 +91,7 @@ test("async from nodejs", async () => {
 
 test("sync from meta-controller", async () => {
     expect.assertions(5);
-    const response = await kyi("http://localhost:4500/error-test/throw-sync-meta", {method: "GET"});
+    const response = await unifiedFetch.get("/error-test/throw-sync-meta");
     expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -102,7 +102,7 @@ test("sync from meta-controller", async () => {
 
 test("async from meta-controller", async () => {
     expect.assertions(5);
-    const response = await kyi("http://localhost:4500/error-test/throw-async-meta", {method: "GET"});
+    const response = await unifiedFetch.get("/error-test/throw-async-meta");
     expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -113,7 +113,7 @@ test("async from meta-controller", async () => {
 
 test("bodyParser", async () => {
     expect.assertions(5);
-    const response = await kyi("http://localhost:4500/error-test/body-parser", {
+    const response = await unifiedFetch.fetch("/error-test/body-parser", {
         method: "POST",
         body: "this is a test string",
         headers: {"Content-Type": "application/json"}

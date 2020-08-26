@@ -9,7 +9,7 @@ import {Response} from "../src/decorators/parameter/Response";
 import {Body} from "../src/decorators/parameter/Body";
 import {IsNumber, IsString, IsValid, MetaValidator} from "meta-validator";
 import {QueryParam} from "../src/decorators/parameter/QueryParam";
-import {kyi} from "./utilities/create-kyi";
+import {unifiedFetch} from "./utilities/unified-fetch";
 import {Route} from "../src/decorators/property/Route";
 import {Param} from "../src/decorators/parameter/Param";
 import {HttpStatus, HttpMethod} from "http-status-ts";
@@ -107,10 +107,8 @@ afterAll((done) => apiServer.close(done));
 
 test("@Body", async () => {
     expect.assertions(5);
-    const response = await kyi("http://localhost:4500/parameters-test/body", {
-        method: "POST",
-        body: JSON.stringify(testWidget),
-        headers: {"Content-Type": "application/json"}
+    const response = await unifiedFetch.post("/parameters-test/body", {
+        json: testWidget
     });
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
@@ -120,7 +118,7 @@ test("@Body", async () => {
 
 test("@CurrentUser", async () => {
     expect.assertions(4);
-    const response = await kyi("http://localhost:4500/parameters-test/current-user", {method: "GET"});
+    const response = await unifiedFetch.get("/parameters-test/current-user");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -129,7 +127,7 @@ test("@CurrentUser", async () => {
 
 test("@HeaderParam", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/parameters-test/header-param", {method: "GET"});
+    const response = await unifiedFetch.get("/parameters-test/header-param");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -138,7 +136,7 @@ test("@HeaderParam", async () => {
 
 test("@Param", async () => {
     expect.assertions(4);
-    const response = await kyi("http://localhost:4500/parameters-test/param/17", {method: "GET"});
+    const response = await unifiedFetch.get("/parameters-test/param/17");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -147,7 +145,7 @@ test("@Param", async () => {
 
 test("@QueryParam", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/parameters-test/query-param?test-param=this-is-a-test", {method: "POST"});
+    const response = await unifiedFetch.post("/parameters-test/query-param?test-param=this-is-a-test");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -156,7 +154,7 @@ test("@QueryParam", async () => {
 
 test("@Request", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/parameters-test/request", {method: "GET"});
+    const response = await unifiedFetch.get("/parameters-test/request");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -165,7 +163,7 @@ test("@Request", async () => {
 
 test("@Response", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/parameters-test/response", {method: "GET"});
+    const response = await unifiedFetch.get("/parameters-test/response");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

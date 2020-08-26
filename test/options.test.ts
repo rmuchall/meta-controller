@@ -3,7 +3,7 @@ import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
-import {kyi} from "./utilities/create-kyi";
+import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
 import {Request} from "../src/decorators/parameter/Request";
 
@@ -68,7 +68,7 @@ afterAll((done) => apiServer.close(done));
 
 test("route prefix", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/api/options-test/route-prefix", {method: "GET"});
+    const response = await unifiedFetch.get("/api/options-test/route-prefix");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -77,7 +77,7 @@ test("route prefix", async () => {
 
 test("custom error handler", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/api/options-test/error-handler", {method: "GET"});
+    const response = await unifiedFetch.get("/api/options-test/error-handler");
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -85,7 +85,7 @@ test("custom error handler", async () => {
 });
 
 test("global middleware", async () => {
-    const response = await kyi("http://localhost:4500/api/options-test/global-middleware", {method: "GET"});
+    const response = await unifiedFetch.get("/api/options-test/global-middleware");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

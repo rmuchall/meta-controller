@@ -3,7 +3,7 @@ import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
-import {kyi} from "./utilities/create-kyi";
+import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
 
 let expressApp: any;
@@ -42,7 +42,7 @@ afterAll((done) => apiServer.close(done));
 
 test("sync", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/this-test/sync", {method: "GET"});
+    const response = await unifiedFetch.get("/this-test/sync");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -51,7 +51,7 @@ test("sync", async () => {
 
 test("async", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/this-test/async", {method: "GET"});
+    const response = await unifiedFetch.get("/this-test/async");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

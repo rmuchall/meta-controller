@@ -4,7 +4,7 @@ import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
 import {Authorize} from "../src/decorators/class/Authorize";
-import {kyi} from "./utilities/create-kyi";
+import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
 
 class Widget {
@@ -60,7 +60,7 @@ afterAll((done) => apiServer.close(done));
 
 test("authorized", async () => {
     expect.assertions(3);
-    const response = await kyi("http://localhost:4500/authorization-test/authorized", {method: "GET"});
+    const response = await unifiedFetch.get("/authorization-test/authorized");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -69,7 +69,7 @@ test("authorized", async () => {
 
 test("unauthorized", async () => {
     expect.assertions(5);
-    const response = await kyi("http://localhost:4500/authorization-test/unauthorized", {method: "GET", throwHttpErrors: false});
+    const response = await unifiedFetch.get("/authorization-test/unauthorized");
     expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
