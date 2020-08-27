@@ -42,17 +42,17 @@ export class MetaController {
         // Register routes
         MetaController.registerRoutes(expressApp);
 
-        // Add default 404 handler
-        expressApp.use((request: express.Request, response: express.Response, next: express.NextFunction) => {
-            throw new HttpError(HttpStatus.NOT_FOUND, "Route not found");
-        });
-
         // Set custom error handler (this must be registered last)
         if (options.customErrorHandler) {
             expressApp.use(MetaController.options.customErrorHandler);
         } else {
             expressApp.use(MetaController.defaultErrorHandler);
         }
+
+        // Add json 404 handler
+        expressApp.use((request: express.Request, response: express.Response, next: express.NextFunction) => {
+            response.status(HttpStatus.NOT_FOUND).send({message: "Route not found"});
+        });
     }
 
     private static registerRoutes(expressApp: any) {

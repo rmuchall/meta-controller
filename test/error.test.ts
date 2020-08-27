@@ -70,13 +70,12 @@ beforeAll((done) => {
 afterAll((done) => apiServer.close(done));
 
 test("bad path", async () => {
-    expect.assertions(4);
+    expect.assertions(3);
     const response = await unifiedFetch.get("/error/bad-path");
     expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
     expect(result.message).toEqual("Route not found");
-    expect(result.stack).toBeDefined();
 });
 
 test("sync from nodejs", async () => {
