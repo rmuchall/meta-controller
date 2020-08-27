@@ -4,9 +4,9 @@ import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
 import {Body} from "../src/decorators/parameter/Body";
-import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
 import {HttpError} from "../src/models/HttpError";
+import nodeFetch from "node-fetch";
 
 class Widget {
     name: string;
@@ -71,39 +71,39 @@ afterAll((done) => apiServer.close(done));
 
 test("bad path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/error/bad-path");
+    const response = await nodeFetch("http://localhost:4500/error/bad-path", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.NOT_FOUND);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
-    const result = await response.json();
+    const result: any = await response.json();
     expect(result.message).toEqual("Route not found");
 });
 
 test("sync from nodejs", async () => {
     expect.assertions(4);
-    const response = await unifiedFetch.get("/error/throw-sync-nodejs");
+    const response = await nodeFetch("http://localhost:4500/error/throw-sync-nodejs", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
-    const result = await response.json();
+    const result: any = await response.json();
     expect(result.message).toEqual("sync error from nodejs");
     expect(result.stack).toBeDefined();
 });
 
 test("async from nodejs", async () => {
     expect.assertions(4);
-    const response = await unifiedFetch.get("/error/throw-async-nodejs");
+    const response = await nodeFetch("http://localhost:4500/error/throw-async-nodejs", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
-    const result = await response.json();
+    const result: any = await response.json();
     expect(result.message).toEqual("async error from nodejs");
     expect(result.stack).toBeDefined();
 });
 
 test("sync from meta-controller", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.get("/error/throw-sync-meta");
+    const response = await nodeFetch("http://localhost:4500/error/throw-sync-meta", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
-    const result = await response.json();
+    const result: any = await response.json();
     expect(result.statusCode).toEqual(HttpStatus.BAD_REQUEST);
     expect(result.message).toEqual("sync error from meta-controller");
     expect(result.stack).toBeDefined();
@@ -111,10 +111,10 @@ test("sync from meta-controller", async () => {
 
 test("async from meta-controller", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.get("/error/throw-async-meta");
+    const response = await nodeFetch("http://localhost:4500/error/throw-async-meta", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
-    const result = await response.json();
+    const result: any = await response.json();
     expect(result.statusCode).toEqual(HttpStatus.BAD_REQUEST);
     expect(result.message).toEqual("async error from meta-controller");
     expect(result.stack).toBeDefined();
@@ -122,14 +122,14 @@ test("async from meta-controller", async () => {
 
 test("bodyParser", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.fetch("/error/body-parser", {
+    const response = await nodeFetch("http://localhost:4500/error/body-parser", {
         method: "POST",
         body: "this is a test string",
         headers: {"Content-Type": "application/json"}
     });
     expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
-    const result = await response.json();
+    const result: any = await response.json();
     expect(result.statusCode).toEqual(HttpStatus.BAD_REQUEST);
     expect(result.message).toEqual("Unexpected token t in JSON at position 0");
     expect(result.stack).toBeDefined();

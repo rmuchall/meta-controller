@@ -3,8 +3,8 @@ import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
-import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
+import nodeFetch from "node-fetch";
 
 class Widget {
     name: string;
@@ -60,7 +60,7 @@ afterAll((done) => apiServer.close(done));
 
 test("get no path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/basic");
+    const response = await nodeFetch("http://localhost:4500/basic", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -69,7 +69,7 @@ test("get no path", async () => {
 
 test("get with path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/basic/with-path");
+    const response = await nodeFetch("http://localhost:4500/basic/with-path", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -78,7 +78,7 @@ test("get with path", async () => {
 
 test("post no path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.post("/basic");
+    const response = await nodeFetch("http://localhost:4500/basic", {method: HttpMethod.POST});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -87,7 +87,7 @@ test("post no path", async () => {
 
 test("post with path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.post("/basic/with-path");
+    const response = await nodeFetch("http://localhost:4500/basic/with-path", {method: HttpMethod.POST});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

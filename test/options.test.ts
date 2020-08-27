@@ -3,9 +3,9 @@ import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
-import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
 import {Request} from "../src/decorators/parameter/Request";
+import nodeFetch from "node-fetch";
 
 class Widget {
     name: string;
@@ -68,7 +68,7 @@ afterAll((done) => apiServer.close(done));
 
 test("route prefix", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/api/options/route-prefix");
+    const response = await nodeFetch("http://localhost:4500/api/options/route-prefix", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -77,7 +77,7 @@ test("route prefix", async () => {
 
 test("custom error handler", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/api/options/error-handler");
+    const response = await nodeFetch("http://localhost:4500/api/options/error-handler", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -85,9 +85,9 @@ test("custom error handler", async () => {
 });
 
 test("global middleware", async () => {
-    const response = await unifiedFetch.get("/api/options/global-middleware");
+    const response = await nodeFetch("http://localhost:4500/api/options/global-middleware", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
-    const result = await response.json();
+    const result: any = await response.json();
     expect(result.custom).toEqual("from global middleware");
 });

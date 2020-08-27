@@ -3,8 +3,8 @@ import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
-import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
+import nodeFetch from "node-fetch";
 
 class Widget {
     name: string;
@@ -45,7 +45,7 @@ afterAll((done) => apiServer.close(done));
 
 test("async routes", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/async");
+    const response = await nodeFetch("http://localhost:4500/async", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

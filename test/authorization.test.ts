@@ -4,8 +4,8 @@ import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
 import {Authorize} from "../src/decorators/class/Authorize";
-import {unifiedFetch} from "./utilities/unified-fetch";
 import {HttpStatus, HttpMethod} from "http-status-ts";
+import nodeFetch from "node-fetch";
 
 class Widget {
     name: string;
@@ -60,7 +60,7 @@ afterAll((done) => apiServer.close(done));
 
 test("authorized", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/authorization/authorized");
+    const response = await nodeFetch("http://localhost:4500/authorization/authorized", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -69,10 +69,10 @@ test("authorized", async () => {
 
 test("unauthorized", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.get("/authorization/unauthorized");
+    const response = await nodeFetch("http://localhost:4500/authorization/unauthorized", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
-    const result = await response.json();
+    const result: any = await response.json();
     expect(result.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     expect(result.message).toEqual("Unauthorized");
     expect(result.stack).toBeDefined();

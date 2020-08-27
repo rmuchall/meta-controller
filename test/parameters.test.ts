@@ -9,11 +9,10 @@ import {Response} from "../src/decorators/parameter/Response";
 import {Body} from "../src/decorators/parameter/Body";
 import {IsNumber, IsString, IsValid, MetaValidator} from "meta-validator";
 import {QueryParam} from "../src/decorators/parameter/QueryParam";
-import {unifiedFetch} from "./utilities/unified-fetch";
 import {Route} from "../src/decorators/property/Route";
 import {Param} from "../src/decorators/parameter/Param";
 import {HttpStatus, HttpMethod} from "http-status-ts";
-import {UnifiedFetch} from "unified-fetch";
+import nodeFetch from "node-fetch";
 
 class User {
     userName: string;
@@ -108,11 +107,10 @@ afterAll((done) => apiServer.close(done));
 
 test("@Body", async () => {
     expect.assertions(5);
-    const myUnifiedFetch = new UnifiedFetch({
-        prefixUrl: "http://localhost:4500"
-    })
-    const response = await myUnifiedFetch.post("/parameters/body", {
-        json: testWidget,
+    const response = await nodeFetch("http://localhost:4500/parameters/body", {
+        method: HttpMethod.POST,
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(testWidget),
     });
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
@@ -122,7 +120,7 @@ test("@Body", async () => {
 
 test("@CurrentUser", async () => {
     expect.assertions(4);
-    const response = await unifiedFetch.get("/parameters/current-user");
+    const response = await nodeFetch("http://localhost:4500/parameters/current-user", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -131,7 +129,7 @@ test("@CurrentUser", async () => {
 
 test("@HeaderParam", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/parameters/header-param");
+    const response = await nodeFetch("http://localhost:4500/parameters/header-param", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -140,7 +138,7 @@ test("@HeaderParam", async () => {
 
 test("@Param", async () => {
     expect.assertions(4);
-    const response = await unifiedFetch.get("/parameters/param/17");
+    const response = await nodeFetch("http://localhost:4500/parameters/param/17", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -149,7 +147,7 @@ test("@Param", async () => {
 
 test("@QueryParam", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.post("/parameters/query-param?test-param=this-is-a-test");
+    const response = await nodeFetch("http://localhost:4500/parameters/query-param?test-param=this-is-a-test", {method: HttpMethod.POST});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -158,7 +156,7 @@ test("@QueryParam", async () => {
 
 test("@Request", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/parameters/request");
+    const response = await nodeFetch("http://localhost:4500/parameters/request", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -167,7 +165,7 @@ test("@Request", async () => {
 
 test("@Response", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/parameters/response");
+    const response = await nodeFetch("http://localhost:4500/parameters/response", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
