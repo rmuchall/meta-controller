@@ -27,4 +27,4 @@ export * from "./models/contexts/ParameterContext";
 export * from "./models/contexts/RouteContext";
 // utilities
 export * from "./utilities/handlers";
-export * from "./utilities/string-utils";
+// export * from "./utilities/string-utils"; // Do not export

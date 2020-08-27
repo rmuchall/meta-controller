@@ -22,7 +22,7 @@ let apiServer: HttpServer;
 beforeAll((done) => {
     MetaController.clearMetadata();
 
-    @JsonController("/basic-test")
+    @JsonController("/basic")
     class WidgetController {
         @Route(HttpMethod.GET)
         get(): Widget {
@@ -60,7 +60,7 @@ afterAll((done) => apiServer.close(done));
 
 test("get no path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/basic-test");
+    const response = await unifiedFetch.get("/basic");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -69,7 +69,7 @@ test("get no path", async () => {
 
 test("get with path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/basic-test/with-path");
+    const response = await unifiedFetch.get("/basic/with-path");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -78,7 +78,7 @@ test("get with path", async () => {
 
 test("post no path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.post("/basic-test");
+    const response = await unifiedFetch.post("/basic");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -87,7 +87,7 @@ test("post no path", async () => {
 
 test("post with path", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.post("/basic-test/with-path");
+    const response = await unifiedFetch.post("/basic/with-path");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

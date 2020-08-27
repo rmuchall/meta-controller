@@ -1,4 +1,4 @@
-import express, {Request as ExpressRequest, Response as ExpressResponse} from "express";
+import express from "express";
 import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
@@ -13,6 +13,7 @@ import {unifiedFetch} from "./utilities/unified-fetch";
 import {Route} from "../src/decorators/property/Route";
 import {Param} from "../src/decorators/parameter/Param";
 import {HttpStatus, HttpMethod} from "http-status-ts";
+import {UnifiedFetch} from "unified-fetch";
 
 class User {
     userName: string;
@@ -47,7 +48,7 @@ let apiServer: HttpServer;
 beforeAll((done) => {
     MetaController.clearMetadata();
 
-    @JsonController("/parameters-test")
+    @JsonController("/parameters")
     class WidgetController {
         @Route(HttpMethod.POST, "/body")
         postWidget(@Body() widget: Widget): Widget {
@@ -79,12 +80,12 @@ beforeAll((done) => {
         }
 
         @Route(HttpMethod.GET, "/request")
-        getRequest(@Request() request: ExpressRequest): boolean {
+        getRequest(@Request() request: express.Request): boolean {
             return true;
         }
 
         @Route(HttpMethod.GET, "/response")
-        getResponse(@Response() response: ExpressResponse): boolean {
+        getResponse(@Response() response: express.Response): boolean {
             return true;
         }
     }
@@ -107,8 +108,11 @@ afterAll((done) => apiServer.close(done));
 
 test("@Body", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.post("/parameters-test/body", {
-        json: testWidget
+    const myUnifiedFetch = new UnifiedFetch({
+        prefixUrl: "http://localhost:4500"
+    })
+    const response = await myUnifiedFetch.post("/parameters/body", {
+        json: testWidget,
     });
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
@@ -118,7 +122,7 @@ test("@Body", async () => {
 
 test("@CurrentUser", async () => {
     expect.assertions(4);
-    const response = await unifiedFetch.get("/parameters-test/current-user");
+    const response = await unifiedFetch.get("/parameters/current-user");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -127,7 +131,7 @@ test("@CurrentUser", async () => {
 
 test("@HeaderParam", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/parameters-test/header-param");
+    const response = await unifiedFetch.get("/parameters/header-param");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -136,7 +140,7 @@ test("@HeaderParam", async () => {
 
 test("@Param", async () => {
     expect.assertions(4);
-    const response = await unifiedFetch.get("/parameters-test/param/17");
+    const response = await unifiedFetch.get("/parameters/param/17");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -145,7 +149,7 @@ test("@Param", async () => {
 
 test("@QueryParam", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.post("/parameters-test/query-param?test-param=this-is-a-test");
+    const response = await unifiedFetch.post("/parameters/query-param?test-param=this-is-a-test");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -154,7 +158,7 @@ test("@QueryParam", async () => {
 
 test("@Request", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/parameters-test/request");
+    const response = await unifiedFetch.get("/parameters/request");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -163,7 +167,7 @@ test("@Request", async () => {
 
 test("@Response", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/parameters-test/response");
+    const response = await unifiedFetch.get("/parameters/response");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

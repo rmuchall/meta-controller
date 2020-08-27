@@ -22,7 +22,7 @@ let apiServer: HttpServer;
 beforeAll((done) => {
     MetaController.clearMetadata();
 
-    @JsonController("/async-test")
+    @JsonController("/async")
     class WidgetController {
         @Route(HttpMethod.GET)
         async getOne(): Promise<Widget> {
@@ -45,7 +45,7 @@ afterAll((done) => apiServer.close(done));
 
 test("async routes", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/async-test");
+    const response = await unifiedFetch.get("/async");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

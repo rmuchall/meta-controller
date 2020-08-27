@@ -2,10 +2,9 @@ import "reflect-metadata";
 import {ControllerContext} from "./models/contexts/ControllerContext";
 import {RouteContext} from "./models/contexts/RouteContext";
 import {Metadata} from "./models/Metadata";
-import {stripDuplicateSlashes} from "./utilities/string-utils";
 import {Options} from "./interfaces/Options";
 import {AuthorizationContext} from "./models/contexts/AuthorizationContext";
-import express, {Request, Response} from "express";
+import express from "express";
 import {ParameterContext} from "./models/contexts/ParameterContext";
 import {ParameterType} from "./enums/ParameterType";
 import {ClassType, MetaTransformer} from "meta-transformer";
@@ -13,6 +12,7 @@ import {MetaValidator, ValidationErrors} from "meta-validator";
 import {HttpError} from "./models/HttpError";
 import cors from "cors";
 import {HttpStatus} from "http-status-ts";
+import {stripDuplicateSlashes} from "./utilities/string-utils";
 
 export class MetaController {
     private static metadata: Record<string, Metadata> = {};
@@ -42,6 +42,15 @@ export class MetaController {
         // Register routes
         MetaController.registerRoutes(expressApp);
 
+        // Add json 404 handler
+        expressApp.use((request: express.Request, response: express.Response, next: express.NextFunction) => {
+            if (MetaController.options.isDebug) {
+                console.log("json 404 handler()");
+            }
+
+            response.status(HttpStatus.NOT_FOUND).send({message: "Route not found"});
+        });
+
         // Set custom error handler (this must be registered last)
         if (options.customErrorHandler) {
             expressApp.use(MetaController.options.customErrorHandler);
@@ -70,17 +79,21 @@ export class MetaController {
             // Iterate through routes
             const pathArray: string[] = [];
             for (const propertyKey of Object.keys(classMetadata.routes)) {
-                const path: string = stripDuplicateSlashes(`/${MetaController.options.routePrefix ? MetaController.options.routePrefix : ""}/${classMetadata.controller.baseRoute}/${classMetadata.routes[propertyKey].path ? classMetadata.routes[propertyKey].path : ""}`).toLowerCase();
+                // Normalize complete route path
+                const prefixPath = MetaController.options.routePrefix ? MetaController.options.routePrefix : "";
+                const controllerPath = classMetadata.controller.baseRoute;
+                const routePath = classMetadata.routes[propertyKey].path ? classMetadata.routes[propertyKey].path : "";
+                const normalizedPath: string = stripDuplicateSlashes(`/${prefixPath}/${controllerPath}/${routePath}`.toLowerCase());
 
                 // Check for duplicate paths
-                if (pathArray.includes(`${classMetadata.routes[propertyKey].httpMethod.toLowerCase()}/${path}`)) {
+                if (pathArray.includes(`${classMetadata.routes[propertyKey].httpMethod.toLowerCase()}/${normalizedPath}`)) {
                     throw new Error("Duplicate express paths found");
                 } else {
-                    pathArray.push(`${classMetadata.routes[propertyKey].httpMethod.toLowerCase()}/${path}`);
+                    pathArray.push(`${classMetadata.routes[propertyKey].httpMethod.toLowerCase()}/${normalizedPath}`);
                 }
 
                 // Create Express route handler
-                const expressRouteHandler = (request: Request, response: Response, next: Function): void => {
+                const expressRouteHandler = (request: express.Request, response: express.Response, next: express.NextFunction): void => {
                     try {
                         MetaController.handleAuthorization(request, response, classMetadata.authorization)
                             .then(() => MetaController.handleParameters(request, response, classMetadata.parameters[propertyKey]))
@@ -96,7 +109,7 @@ export class MetaController {
                 }
 
                 // Register Express route handler
-                expressApp[classMetadata.routes[propertyKey].httpMethod.toLowerCase()](path, expressRouteHandler);
+                expressApp[classMetadata.routes[propertyKey].httpMethod.toLowerCase()](normalizedPath, expressRouteHandler);
             }
         }
     }
@@ -134,7 +147,7 @@ export class MetaController {
         MetaController.controllers = {};
     }
 
-    private static handleAuthorization(request: Request, response: Response, authorizationContext?: AuthorizationContext): Promise<void> {
+    private static handleAuthorization(request: express.Request, response: express.Response, authorizationContext?: AuthorizationContext): Promise<void> {
         if (authorizationContext) {
             if (!MetaController.options.authorizationHandler || typeof MetaController.options.authorizationHandler !== "function") {
                 throw new Error("No authorization handler specified");
@@ -151,7 +164,7 @@ export class MetaController {
         return Promise.resolve();
     }
 
-    private static handleResult(request: Request, response: Response, next: Function, routeContext: RouteContext, parameters?: ParameterContext[]): Promise<void> {
+    private static handleResult(request: express.Request, response: express.Response, next: express.NextFunction, routeContext: RouteContext, parameters?: ParameterContext[]): Promise<void> {
         return Promise.resolve(parameters ?
             MetaController.controllers[routeContext.className][routeContext.propertyKey](...parameters) :
             MetaController.controllers[routeContext.className][routeContext.propertyKey]()).then(result => {
@@ -160,7 +173,7 @@ export class MetaController {
         });
     }
 
-    private static async handleParameters(request: Request, response: Response, parameterMetadata: ParameterContext[] | undefined): Promise<any[] | undefined> {
+    private static async handleParameters(request: express.Request, response: express.Response, parameterMetadata: ParameterContext[] | undefined): Promise<any[] | undefined> {
         if (!parameterMetadata) {
             return Promise.resolve(undefined);
         }
@@ -225,8 +238,8 @@ export class MetaController {
 
         return Promise.all(parameterHandlers);
     }
-    
-    private static defaultErrorHandler(error: any, request: Request, response: Response, next: Function): void {
+
+    private static defaultErrorHandler(error: any, request: express.Request, response: express.Response, next: express.NextFunction): void {
         if (MetaController.options.isDebug) {
             console.error(error);
         }

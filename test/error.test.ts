@@ -24,7 +24,7 @@ let apiServer: HttpServer;
 beforeAll((done) => {
     MetaController.clearMetadata();
 
-    @JsonController("/error-test")
+    @JsonController("/error")
     class WidgetController {
         @Route(HttpMethod.GET, "/throw-sync-nodejs")
         throwSyncNodeJs(): void {
@@ -69,9 +69,18 @@ beforeAll((done) => {
 
 afterAll((done) => apiServer.close(done));
 
+test("bad path", async () => {
+    expect.assertions(3);
+    const response = await unifiedFetch.get("/error/bad-path");
+    expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result.message).toEqual("Route not found");
+});
+
 test("sync from nodejs", async () => {
     expect.assertions(4);
-    const response = await unifiedFetch.get("/error-test/throw-sync-nodejs");
+    const response = await unifiedFetch.get("/error/throw-sync-nodejs");
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -81,7 +90,7 @@ test("sync from nodejs", async () => {
 
 test("async from nodejs", async () => {
     expect.assertions(4);
-    const response = await unifiedFetch.get("/error-test/throw-async-nodejs");
+    const response = await unifiedFetch.get("/error/throw-async-nodejs");
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -91,7 +100,7 @@ test("async from nodejs", async () => {
 
 test("sync from meta-controller", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.get("/error-test/throw-sync-meta");
+    const response = await unifiedFetch.get("/error/throw-sync-meta");
     expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -102,7 +111,7 @@ test("sync from meta-controller", async () => {
 
 test("async from meta-controller", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.get("/error-test/throw-async-meta");
+    const response = await unifiedFetch.get("/error/throw-async-meta");
     expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -113,7 +122,7 @@ test("async from meta-controller", async () => {
 
 test("bodyParser", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.fetch("/error-test/body-parser", {
+    const response = await unifiedFetch.fetch("/error/body-parser", {
         method: "POST",
         body: "this is a test string",
         headers: {"Content-Type": "application/json"}

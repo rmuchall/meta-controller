@@ -1,4 +1,4 @@
-import express, {Request as ExpressRequest} from "express";
+import express from "express";
 import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
@@ -23,7 +23,7 @@ let apiServer: HttpServer;
 beforeAll((done) => {
     MetaController.clearMetadata();
 
-    @JsonController("/options-test")
+    @JsonController("/options")
     class WidgetController {
         @Route(HttpMethod.GET, "/route-prefix")
         routePrefix(): Widget {
@@ -36,7 +36,7 @@ beforeAll((done) => {
         }
 
         @Route(HttpMethod.GET, "/global-middleware")
-        globalMiddleware(@Request() request: ExpressRequest): Record<string, any> {
+        globalMiddleware(@Request() request: express.Request): Record<string, any> {
             return {
                 custom: (request as any).customProperty
             };
@@ -68,7 +68,7 @@ afterAll((done) => apiServer.close(done));
 
 test("route prefix", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/api/options-test/route-prefix");
+    const response = await unifiedFetch.get("/api/options/route-prefix");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -77,7 +77,7 @@ test("route prefix", async () => {
 
 test("custom error handler", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/api/options-test/error-handler");
+    const response = await unifiedFetch.get("/api/options/error-handler");
     expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -85,7 +85,7 @@ test("custom error handler", async () => {
 });
 
 test("global middleware", async () => {
-    const response = await unifiedFetch.get("/api/options-test/global-middleware");
+    const response = await unifiedFetch.get("/api/options/global-middleware");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

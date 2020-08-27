@@ -24,7 +24,7 @@ beforeAll((done) => {
     MetaController.clearMetadata();
 
     @Authorize(["AllowRole"])
-    @JsonController("/authorization-test")
+    @JsonController("/authorization")
     class WidgetAllowController {
         @Route(HttpMethod.GET, "/authorized")
         getOne(): Widget {
@@ -33,7 +33,7 @@ beforeAll((done) => {
     }
 
     @Authorize(["RefuseRole"])
-    @JsonController("/authorization-test")
+    @JsonController("/authorization")
     class WidgetDenyController {
         @Route(HttpMethod.GET, "/unauthorized")
         getOne(): Widget {
@@ -60,7 +60,7 @@ afterAll((done) => apiServer.close(done));
 
 test("authorized", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/authorization-test/authorized");
+    const response = await unifiedFetch.get("/authorization/authorized");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -69,7 +69,7 @@ test("authorized", async () => {
 
 test("unauthorized", async () => {
     expect.assertions(5);
-    const response = await unifiedFetch.get("/authorization-test/unauthorized");
+    const response = await unifiedFetch.get("/authorization/unauthorized");
     expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();

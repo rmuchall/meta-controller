@@ -12,7 +12,7 @@ let apiServer: HttpServer;
 beforeAll((done) => {
     MetaController.clearMetadata();
 
-    @JsonController("/this-test")
+    @JsonController("/this")
     class WidgetController {
         classProperty: string = "this is a class property";
 
@@ -42,7 +42,7 @@ afterAll((done) => apiServer.close(done));
 
 test("sync", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/this-test/sync");
+    const response = await unifiedFetch.get("/this/sync");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
@@ -51,7 +51,7 @@ test("sync", async () => {
 
 test("async", async () => {
     expect.assertions(3);
-    const response = await unifiedFetch.get("/this-test/async");
+    const response = await unifiedFetch.get("/this/async");
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
