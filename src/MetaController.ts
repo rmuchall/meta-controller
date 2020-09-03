@@ -14,7 +14,7 @@ import cors from "cors";
 import {HttpStatus} from "http-status-ts";
 import {stripDuplicateSlashes} from "./utilities/string-utils";
 
-export class MetaController {
+export abstract class MetaController {
     private static metadata: Record<string, Metadata> = {};
     private static controllers: Record<string, Record<string, any>> = {};
     private static options: Options;
