@@ -177,7 +177,7 @@ export abstract class MetaController {
 
         let reflectedTypes: ClassType[];
         let transformedObject: any;
-        let validationErrors: ValidationErrors;
+        let validationErrors: ValidationErrors[];
         const parameterHandlers: Promise<any>[] = [];
         for (const context of parameterMetadata) {
             switch (context.type) {
