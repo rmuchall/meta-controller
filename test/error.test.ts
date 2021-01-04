@@ -32,7 +32,7 @@ beforeAll((done) => {
         }
 
         @Route(HttpMethod.GET, "/throw-async-nodejs")
-        async throwAsyncNodeJs(): Promise<void> {
+        throwAsyncNodeJs(): Promise<void> {
             return new Promise<void>((resolve, reject) => {
                 throw new Error("async error from nodejs");
             });
@@ -44,7 +44,7 @@ beforeAll((done) => {
         }
 
         @Route(HttpMethod.GET, "/throw-async-meta")
-        async throwAsyncMeta(): Promise<void> {
+        throwAsyncMeta(): Promise<void> {
             return new Promise<void>((resolve, reject) => {
                 throw new HttpError(HttpStatus.BAD_REQUEST, "async error from meta-controller");
             });

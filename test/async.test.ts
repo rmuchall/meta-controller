@@ -25,7 +25,7 @@ beforeAll((done) => {
     @JsonController("/async")
     class WidgetController {
         @Route(HttpMethod.GET)
-        async getOne(): Promise<Widget> {
+        getOne(): Promise<Widget> {
             return Promise.resolve(testWidget);
         }
     }
