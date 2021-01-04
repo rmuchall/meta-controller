@@ -13,6 +13,7 @@ import {Route} from "../src/decorators/property/Route";
 import {Param} from "../src/decorators/parameter/Param";
 import {HttpStatus, HttpMethod} from "http-status-ts";
 import nodeFetch from "node-fetch";
+import {stringify} from "querystring";
 
 class User {
     userName: string;
@@ -74,7 +75,7 @@ beforeAll((done) => {
         }
 
         @Route(HttpMethod.POST, "/query-param")
-        postQueryParam(@QueryParam("test-param") testParam: string) {
+        postQueryParam(@QueryParam("testParam") testParam: string) {
             return {testParam: testParam};
         }
 
@@ -147,11 +148,14 @@ test("@Param", async () => {
 
 test("@QueryParam", async () => {
     expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/parameters/query-param?test-param=this-is-a-test", {method: HttpMethod.POST});
+    const queryString = stringify({
+        testParam: "this is a test"
+    });
+    const response = await nodeFetch(`http://localhost:4500/parameters/query-param?${queryString}`, {method: HttpMethod.POST});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({testParam: "this-is-a-test"});
+    expect(result).toEqual({testParam: "this is a test"});
 });
 
 test("@Request", async () => {
