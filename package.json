@@ -31,13 +31,13 @@
   "homepage": "https://github.com/rmuchall/meta-controller#readme",
   "devDependencies": {
     "@types/cors": "2.8.9",
-    "@types/express": "4.17.9",
-    "@types/jest": "26.0.19",
-    "@types/node": "14.14.19",
-    "@typescript-eslint/eslint-plugin": "4.11.1",
-    "@typescript-eslint/parser": "4.11.1",
+    "@types/express": "4.17.11",
+    "@types/jest": "26.0.20",
+    "@types/node": "14.14.22",
+    "@typescript-eslint/eslint-plugin": "4.14.1",
+    "@typescript-eslint/parser": "4.14.1",
     "cpy-cli": "3.1.1",
-    "eslint": "7.17.0",
+    "eslint": "7.18.0",
     "jest": "26.6.3",
     "node-fetch": "3.0.0-beta.8",
     "rimraf": "3.0.2",
@@ -49,8 +49,8 @@
     "cors": "2.8.5",
     "express": "4.17.1",
     "http-status-ts": "0.0.4",
-    "meta-transformer": "0.0.17",
-    "meta-validator": "0.0.39",
+    "meta-transformer": "0.0.18",
+    "meta-validator": "0.0.40",
     "reflect-metadata": "0.1.13"
   }
 }

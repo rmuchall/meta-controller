@@ -188,7 +188,7 @@ export abstract class MetaController {
 
                     // Transform
                     reflectedTypes = Reflect.getMetadata("design:paramtypes", context.target, context.propertyKey);
-                    transformedObject = MetaTransformer.plain2Class(reflectedTypes[context.parameterIndex], request.body);
+                    transformedObject = MetaTransformer.toClass(reflectedTypes[context.parameterIndex], request.body);
                     // Validate
                     validationErrors = await MetaValidator.validate(transformedObject);
                     if (Object.keys(validationErrors).length > 0) {
