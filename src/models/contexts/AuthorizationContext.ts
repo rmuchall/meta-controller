@@ -3,5 +3,5 @@ export class AuthorizationContext {
     target: Object;
     // Context
     className: string;
-    roles: string[];
+    roles?: string[];
 }
