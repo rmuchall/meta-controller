@@ -49,7 +49,11 @@ beforeAll((done) => {
             WidgetDenyController
         ],
         authorizationHandler: (request, response, roles): Promise<boolean> => {
-            return Promise.resolve(roles.includes("AllowRole"));
+            if (roles) {
+                return Promise.resolve(roles.includes("AllowRole"));
+            }
+            
+            return Promise.resolve(false);
         }
     });
     apiServer = http.createServer(expressApp);
