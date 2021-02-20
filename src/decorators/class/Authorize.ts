@@ -1,8 +1,8 @@
 import {MetaController} from "../../MetaController";
 import {AuthorizationContext} from "../../models/contexts/AuthorizationContext";
 
-export function Authorize(roles?: string[]): Function {
-    return function(target: Function): Function | void {
+export function Authorize(roles?: string[]): ClassDecorator {
+    return target => {
         MetaController.addMetadata(Object.assign<AuthorizationContext, AuthorizationContext>(new AuthorizationContext(), {
             // Metadata
             target: target,
@@ -10,5 +10,5 @@ export function Authorize(roles?: string[]): Function {
             className: target.name,
             roles: roles
         }));
-    }
+    };
 }

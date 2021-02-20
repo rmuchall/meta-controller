@@ -4,7 +4,7 @@ import {RouteContext} from "./models/contexts/RouteContext";
 import {Metadata} from "./models/Metadata";
 import {Options} from "./interfaces/Options";
 import {AuthorizationContext} from "./models/contexts/AuthorizationContext";
-import express from "express";
+import express, {Application} from "express";
 import {ParameterContext} from "./models/contexts/ParameterContext";
 import {ParameterType} from "./enums/ParameterType";
 import {ClassType, MetaTransformer} from "meta-transformer";
@@ -13,13 +13,14 @@ import {HttpError} from "./models/HttpError";
 import cors from "cors";
 import {HttpStatus} from "http-status-ts";
 import {stripDuplicateSlashes} from "./utilities/string-utils";
+import {ErrorHandler} from "./utilities/handlers";
 
 export abstract class MetaController {
     private static metadata: Record<string, Metadata> = {};
     private static controllers: Record<string, Record<string, any>> = {};
     private static options: Options;
 
-    static useExpressServer(expressApp: any, options: Options): void {
+    static useExpressServer(expressApp: Application, options: Options): void {
         for (const classType of options.controllerClassTypes) {
             MetaController.controllers[classType.name] = new classType();
         }
@@ -49,7 +50,7 @@ export abstract class MetaController {
 
         // Set custom error handler (this must be registered last)
         if (options.customErrorHandler) {
-            expressApp.use(MetaController.options.customErrorHandler);
+            expressApp.use(MetaController.options.customErrorHandler as ErrorHandler);
         } else {
             expressApp.use(MetaController.defaultErrorHandler);
         }
@@ -102,7 +103,7 @@ export abstract class MetaController {
                         // Catch sync errors
                         next(error);
                     }
-                }
+                };
 
                 // Register Express route handler
                 expressApp[classMetadata.routes[propertyKey].httpMethod.toLowerCase()](normalizedPath, expressRouteHandler);
@@ -143,6 +144,29 @@ export abstract class MetaController {
         MetaController.controllers = {};
     }
 
+    static extractJwtTokenFromHeader(authorizationHeader?: string): string {
+        // No header
+        if (!authorizationHeader) {
+            throw new HttpError(HttpStatus.UNAUTHORIZED, "No authorization header found");
+        }
+
+        // Slice Bearer for case-insensitive search
+        const slicedHeader = authorizationHeader.slice(0, 7);
+
+        // No bearer
+        if (slicedHeader.search(new RegExp("Bearer", "i")) === -1) {
+            throw new HttpError(HttpStatus.UNAUTHORIZED, "No bearer found");
+        }
+
+        // Extract token
+        const encodedJwtToken = authorizationHeader.split(slicedHeader).pop();
+        if (!encodedJwtToken) {
+            throw new HttpError(HttpStatus.UNAUTHORIZED, "No JWT token found");
+        }
+
+        return encodedJwtToken;
+    }
+
     private static handleAuthorization(request: express.Request, response: express.Response, authorizationContext?: AuthorizationContext): Promise<void> {
         if (authorizationContext) {
             if (!MetaController.options.authorizationHandler || typeof MetaController.options.authorizationHandler !== "function") {
@@ -178,6 +202,7 @@ export abstract class MetaController {
         let reflectedTypes: ClassType[];
         let transformedObject: any;
         let validationErrors: ValidationErrors[];
+        let encodedJwtToken: string;
         const parameterHandlers: Promise<any>[] = [];
         for (const context of parameterMetadata) {
             switch (context.type) {
@@ -203,6 +228,10 @@ export abstract class MetaController {
                     }
 
                     parameterHandlers.splice(context.parameterIndex, 0, MetaController.options.currentUserHandler(request, response));
+                    break;
+                case ParameterType.EncodedJwtToken:
+                    encodedJwtToken = MetaController.extractJwtTokenFromHeader(request.header("Authorization"));
+                    parameterHandlers.splice(context.parameterIndex, 0, Promise.resolve(encodedJwtToken));
                     break;
                 case ParameterType.HeaderParam:
                     if (!request.header(context.parameters[0])) {

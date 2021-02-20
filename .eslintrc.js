@@ -1,31 +1,43 @@
 module.exports = {
     root: true,
     env: {
-        node: true
+        node: true,
+        commonjs: true
     },
+    extends: [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
     parser: "@typescript-eslint/parser",
+    parserOptions: {
+        project: "./tsconfig.json"
+    },
     plugins: [
         "@typescript-eslint"
     ],
-    extends: [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+    ignorePatterns: [
+        ".eslintrc.js"
     ],
     rules: {
-        "no-control-regex": "off",
+        // Style - Enable
+        "quotes": ["error", "double"],
+        "semi": ["error", "always"],
+        // Nodejs - Enable
         "require-await": "error",
         "no-return-await": "error",
-        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "error",
+        "@typescript-eslint/unbound-method": ["error", {"ignoreStatic": true}],
+        // NodeJs - Disable
         "@typescript-eslint/no-unused-vars": "off",
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/member-delimiter-style": "off",
-        "@typescript-eslint/no-unsafe-member-access": "off",
-        "@typescript-eslint/no-unsafe-call": "off",
-        "@typescript-eslint/no-unsafe-assignment": "off",
-        "@typescript-eslint/ban-types": "off",
-        "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-inferrable-types": "off",
-        "@typescript-eslint/explicit-module-boundary-types": ["error", {"allowArgumentsExplicitlyTypedAsAny": true}],
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/restrict-template-expressions": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        // Project specific - Disable
+        "@typescript-eslint/ban-types": "off",
     }
 };

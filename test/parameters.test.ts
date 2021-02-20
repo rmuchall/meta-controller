@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Application} from "express";
 import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
@@ -11,9 +11,10 @@ import {IsNumber, IsString, IsValid, MetaValidator} from "meta-validator";
 import {QueryParam} from "../src/decorators/parameter/QueryParam";
 import {Route} from "../src/decorators/property/Route";
 import {Param} from "../src/decorators/parameter/Param";
-import {HttpStatus, HttpMethod} from "http-status-ts";
+import {HttpMethod, HttpStatus} from "http-status-ts";
 import nodeFetch from "node-fetch";
 import {stringify} from "querystring";
+import {EncodedJwtToken} from "../src/decorators/parameter/EncodedJwtToken";
 
 class User {
     userName: string;
@@ -42,7 +43,7 @@ const testWidget: Widget = Object.assign<Widget, Widget>(new Widget(), {
     isBlue: true
 });
 
-let expressApp: any;
+let expressApp: Application;
 let apiServer: HttpServer;
 
 beforeAll((done) => {
@@ -63,9 +64,14 @@ beforeAll((done) => {
             return currentUser;
         }
 
+        @Route(HttpMethod.GET, "/encoded-jwt-token")
+        extractJwtToken(@EncodedJwtToken() encodedJwtToken: string): Record<string, string> {
+            return {encodedJwtToken: encodedJwtToken};
+        }
+
         @Route(HttpMethod.GET, "/header-param")
-        getHeaderParam(@HeaderParam("Host") host: string): Record<string, string> {
-            return {host: host};
+        getHeaderParam(@HeaderParam("TestHeader") testHeader: string): Record<string, string> {
+            return {testHeader: testHeader};
         }
 
         @Route(HttpMethod.GET, "/param/:id")
@@ -92,6 +98,7 @@ beforeAll((done) => {
 
     expressApp = express();
     MetaController.useExpressServer(expressApp, {
+        isDebug: true,
         isUseCors: true,
         controllerClassTypes: [
             WidgetController
@@ -128,13 +135,32 @@ test("@CurrentUser", async () => {
     expect(result).toEqual(testUser);
 });
 
-test("@HeaderParam", async () => {
+test("@EncodedJwtToken", async () => {
     expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/parameters/header-param", {method: HttpMethod.GET});
+    const response = await nodeFetch("http://localhost:4500/parameters/encoded-jwt-token", {
+        method: HttpMethod.GET,
+        headers: {
+            Authorization: "Bearer this-is-an-encoded-jwt-token"
+        }
+    });
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({"host": "localhost:4500"});
+    expect(result).toEqual({"encodedJwtToken": "this-is-an-encoded-jwt-token"});
+});
+
+test("@HeaderParam", async () => {
+    expect.assertions(3);
+    const response = await nodeFetch("http://localhost:4500/parameters/header-param", {
+        method: HttpMethod.GET,
+        headers: {
+            TestHeader: "this-is-a-test-header"
+        }
+    });
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toEqual({"testHeader": "this-is-a-test-header"});
 });
 
 test("@Param", async () => {

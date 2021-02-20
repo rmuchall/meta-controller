@@ -8,7 +8,7 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf ./build",
-    "lint": "eslint --config ./.eslintrc.js --ext .ts ./src ./test",
+    "lint": "eslint --config .eslintrc.js ./src ./test",
     "test": "jest --coverage",
     "build": "npm run clean && npm rum build:cjs && npm run build:esm && npm run build:es2015",
     "build:cjs": "tsc --project tsconfig-release.json --module commonjs --target es5 --outDir build/cjs",
@@ -33,9 +33,9 @@
     "@types/cors": "2.8.10",
     "@types/express": "4.17.11",
     "@types/jest": "26.0.20",
-    "@types/node": "14.14.28",
-    "@typescript-eslint/eslint-plugin": "4.15.0",
-    "@typescript-eslint/parser": "4.15.0",
+    "@types/node": "14.14.31",
+    "@typescript-eslint/eslint-plugin": "4.15.1",
+    "@typescript-eslint/parser": "4.15.1",
     "cpy-cli": "3.1.1",
     "eslint": "7.20.0",
     "jest": "26.6.3",
@@ -48,9 +48,9 @@
   "dependencies": {
     "cors": "2.8.5",
     "express": "4.17.1",
-    "http-status-ts": "0.0.4",
-    "meta-transformer": "0.0.22",
-    "meta-validator": "0.0.41",
+    "http-status-ts": "0.0.5",
+    "meta-transformer": "0.0.23",
+    "meta-validator": "0.0.42",
     "reflect-metadata": "0.1.13"
   }
 }

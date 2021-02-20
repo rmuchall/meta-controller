@@ -2,7 +2,7 @@ import {MetaController} from "../../MetaController";
 import {ParameterContext} from "../../models/contexts/ParameterContext";
 import {ParameterType} from "../../enums/ParameterType";
 
-export function QueryParam(id: string): ParameterDecorator {
+export function EncodedJwtToken(): ParameterDecorator {
     return (target, propertyKey, parameterIndex) => {
         MetaController.addMetadata(Object.assign<ParameterContext, ParameterContext>(new ParameterContext(), {
             // Metadata
@@ -11,8 +11,8 @@ export function QueryParam(id: string): ParameterDecorator {
             parameterIndex: parameterIndex,
             // Context
             className: target.constructor.name,
-            type: ParameterType.QueryParam,
-            parameters: [id]
+            type: ParameterType.EncodedJwtToken,
+            parameters: []
         }));
     };
 }

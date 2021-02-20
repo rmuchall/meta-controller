@@ -6,6 +6,7 @@ export * from "./decorators/class/JsonController";
 // decorators/parameter
 export * from "./decorators/parameter/Body";
 export * from "./decorators/parameter/CurrentUser";
+export * from "./decorators/parameter/EncodedJwtToken";
 export * from "./decorators/parameter/HeaderParam";
 export * from "./decorators/parameter/Param";
 export * from "./decorators/parameter/QueryParam";

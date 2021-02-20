@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Application} from "express";
 import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
@@ -6,7 +6,7 @@ import {Route} from "../src/decorators/property/Route";
 import {HttpStatus, HttpMethod} from "http-status-ts";
 import nodeFetch from "node-fetch";
 
-let expressApp: any;
+let expressApp: Application;
 let apiServer: HttpServer;
 
 beforeAll((done) => {

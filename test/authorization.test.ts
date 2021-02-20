@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Application} from "express";
 import http, {Server as HttpServer} from "http";
 import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
@@ -17,7 +17,7 @@ const testWidget: Widget = Object.assign<Widget, Widget>(new Widget(), {
     color: "Blue"
 });
 
-let expressApp: any;
+let expressApp: Application;
 let apiServer: HttpServer;
 
 beforeAll((done) => {
@@ -52,7 +52,7 @@ beforeAll((done) => {
             if (roles) {
                 return Promise.resolve(roles.includes("AllowRole"));
             }
-            
+
             return Promise.resolve(false);
         }
     });

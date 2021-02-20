@@ -2,8 +2,8 @@ import {MetaController} from "../../MetaController";
 import {ParameterContext} from "../../models/contexts/ParameterContext";
 import {ParameterType} from "../../enums/ParameterType";
 
-export function Request(): Function {
-    return function(target: Object, propertyKey: string | symbol, parameterIndex: number): void {
+export function Request(): ParameterDecorator {
+    return (target, propertyKey, parameterIndex) => {
         MetaController.addMetadata(Object.assign<ParameterContext, ParameterContext>(new ParameterContext(), {
             // Metadata
             target: target,
@@ -14,5 +14,5 @@ export function Request(): Function {
             type: ParameterType.Request,
             parameters: []
         }));
-    }
+    };
 }
