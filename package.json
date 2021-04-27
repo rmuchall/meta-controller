@@ -32,25 +32,25 @@
   "devDependencies": {
     "@types/cors": "2.8.10",
     "@types/express": "4.17.11",
-    "@types/jest": "26.0.20",
-    "@types/node": "14.14.31",
-    "@typescript-eslint/eslint-plugin": "4.16.1",
-    "@typescript-eslint/parser": "4.16.1",
+    "@types/jest": "26.0.23",
+    "@types/node": "15.0.1",
+    "@typescript-eslint/eslint-plugin": "4.22.0",
+    "@typescript-eslint/parser": "4.22.0",
     "cpy-cli": "3.1.1",
-    "eslint": "7.21.0",
+    "eslint": "7.25.0",
     "jest": "26.6.3",
     "node-fetch": "3.0.0-beta.8",
     "rimraf": "3.0.2",
-    "ts-jest": "26.5.3",
+    "ts-jest": "26.5.5",
     "ts-node": "9.1.1",
-    "typescript": "4.2.3"
+    "typescript": "4.2.4"
   },
   "dependencies": {
     "cors": "2.8.5",
     "express": "4.17.1",
     "http-status-ts": "0.0.5",
-    "meta-transformer": "0.0.23",
-    "meta-validator": "0.0.42",
+    "meta-transformer": "0.0.24",
+    "meta-validator": "0.0.43",
     "reflect-metadata": "0.1.13"
   }
 }
