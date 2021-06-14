@@ -41,7 +41,10 @@ beforeAll((done) => {
     apiServer.listen(4500, done);
 });
 
-afterAll((done) => apiServer.close(done));
+afterAll(done => {
+    apiServer.close(done);
+    done();
+});
 
 test("async routes", async () => {
     expect.assertions(3);

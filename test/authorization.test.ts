@@ -60,7 +60,10 @@ beforeAll((done) => {
     apiServer.listen(4500, done);
 });
 
-afterAll((done) => apiServer.close(done));
+afterAll(done => {
+    apiServer.close();
+    done();
+});
 
 test("authorized", async () => {
     expect.assertions(3);

@@ -9,7 +9,7 @@
   "scripts": {
     "clean": "rimraf ./build",
     "lint": "eslint --config .eslintrc.js ./src ./test",
-    "test": "jest --coverage",
+    "test": "jest --coverage --runInBand",
     "build": "npm run clean && npm rum build:cjs && npm run build:esm && npm run build:es2015",
     "build:cjs": "tsc --project tsconfig-release.json --module commonjs --target es5 --outDir build/cjs",
     "build:esm": "tsc --project tsconfig-release.json --module es2015 --target es5 --outDir build/esm",
