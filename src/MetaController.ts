@@ -215,7 +215,7 @@ export abstract class MetaController {
                     reflectedTypes = Reflect.getMetadata("design:paramtypes", context.target, context.propertyKey);
                     transformedObject = MetaTransformer.toClass(reflectedTypes[context.parameterIndex], request.body);
                     // Validate
-                    validationErrors = await MetaValidator.validate(transformedObject);
+                    validationErrors = await new MetaValidator().validate(transformedObject);
                     if (Object.keys(validationErrors).length > 0) {
                         throw new HttpError(HttpStatus.BAD_REQUEST, "Failed validation", validationErrors);
                     }
