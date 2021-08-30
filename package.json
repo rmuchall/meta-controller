@@ -48,9 +48,9 @@
   "dependencies": {
     "cors": "2.8.5",
     "express": "4.17.1",
-    "http-status-ts": "0.0.7",
-    "meta-transformer": "0.0.27",
-    "meta-validator": "0.0.49",
+    "http-status-ts": "0.0.9",
+    "meta-transformer": "0.0.28",
+    "meta-validator": "0.0.50",
     "reflect-metadata": "0.1.13"
   }
 }
