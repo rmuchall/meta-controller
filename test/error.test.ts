@@ -8,16 +8,6 @@ import {HttpStatus, HttpMethod} from "http-status-ts";
 import {HttpError} from "../src/models/HttpError";
 import nodeFetch from "node-fetch";
 
-class Widget {
-    name: string;
-    color: string;
-}
-
-const testWidget: Widget = Object.assign<Widget, Widget>(new Widget(), {
-    name: "Doodad",
-    color: "Blue"
-});
-
 let expressApp: Application;
 let apiServer: HttpServer;
 
