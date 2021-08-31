@@ -220,42 +220,42 @@ export abstract class MetaController {
                         throw new HttpError(HttpStatus.BAD_REQUEST, "Failed validation", validationErrors);
                     }
 
-                    parameterHandlers.splice(context.parameterIndex, 0, Promise.resolve(transformedObject));
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(transformedObject));
                     break;
                 case ParameterType.CurrentUser:
                     if (!MetaController.options.currentUserHandler || typeof MetaController.options.currentUserHandler !== "function") {
                         throw new Error("Invalid currentUser handler");
                     }
 
-                    parameterHandlers.splice(context.parameterIndex, 0, MetaController.options.currentUserHandler(request, response));
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, MetaController.options.currentUserHandler(request, response));
                     break;
                 case ParameterType.EncodedJwtToken:
                     encodedJwtToken = MetaController.extractJwtTokenFromHeader(request.header("Authorization"));
-                    parameterHandlers.splice(context.parameterIndex, 0, Promise.resolve(encodedJwtToken));
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(encodedJwtToken));
                     break;
                 case ParameterType.HeaderParam:
                     if (!request.header(context.parameters[0])) {
                         throw new HttpError(HttpStatus.BAD_REQUEST, "Header does not exist");
                     }
-                    parameterHandlers.splice(context.parameterIndex, 0, Promise.resolve(request.header(context.parameters[0])));
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(request.header(context.parameters[0])));
                     break;
                 case ParameterType.Param:
                     if (!request.params[context.parameters[0]]) {
                         throw new HttpError(HttpStatus.BAD_REQUEST, "Parameter does not exist");
                     }
-                    parameterHandlers.splice(context.parameterIndex, 0, Promise.resolve(JSON.parse(request.params[context.parameters[0]])));
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(JSON.parse(request.params[context.parameters[0]])));
                     break;
                 case ParameterType.QueryParam:
                     if (!request.query[context.parameters[0]]) {
                         throw new HttpError(HttpStatus.BAD_REQUEST, "Query parameter does not exist");
                     }
-                    parameterHandlers.splice(context.parameterIndex, 0, Promise.resolve(request.query[context.parameters[0]]));
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(request.query[context.parameters[0]]));
                     break;
                 case ParameterType.Request:
-                    parameterHandlers.splice(context.parameterIndex, 0, Promise.resolve(request));
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(request));
                     break;
                 case ParameterType.Response:
-                    parameterHandlers.splice(context.parameterIndex, 0, Promise.resolve(response));
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(response));
                     break;
                 default:
                     throw new Error("Invalid ParameterType");

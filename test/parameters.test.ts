@@ -60,6 +60,7 @@ beforeAll((done) => {
 
         @Route(HttpMethod.GET, "/current-user")
         getCurrentUser(@CurrentUser() currentUser: User): User {
+            expect(currentUser).toBeInstanceOf(User);
             expect(currentUser).toEqual(testUser);
             return currentUser;
         }
@@ -94,6 +95,16 @@ beforeAll((done) => {
         getResponse(@Response() response: express.Response): boolean {
             return true;
         }
+
+        @Route(HttpMethod.POST, "/multiple")
+        getMultiple(@CurrentUser() currentUser: User, @EncodedJwtToken() encodedJwtToken: string, @Body() widget: Widget) {
+            expect(currentUser).toBeInstanceOf(User);
+            expect(currentUser).toEqual(testUser);
+            expect(encodedJwtToken).toEqual("this-is-an-encoded-jwt-token");
+            expect(widget).toBeInstanceOf(Widget);
+            expect(widget).toEqual(testWidget);
+            return true;
+        }
     }
 
     expressApp = express();
@@ -120,7 +131,9 @@ test("@Body", async () => {
     expect.assertions(5);
     const response = await nodeFetch("http://localhost:4500/parameters/body", {
         method: HttpMethod.POST,
-        headers: {"Content-Type": "application/json"},
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(testWidget),
     });
     expect(response.status).toEqual(HttpStatus.OK);
@@ -130,7 +143,7 @@ test("@Body", async () => {
 });
 
 test("@CurrentUser", async () => {
-    expect.assertions(4);
+    expect.assertions(5);
     const response = await nodeFetch("http://localhost:4500/parameters/current-user", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
@@ -199,6 +212,22 @@ test("@Request", async () => {
 test("@Response", async () => {
     expect.assertions(3);
     const response = await nodeFetch("http://localhost:4500/parameters/response", {method: HttpMethod.GET});
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toBeTruthy();
+});
+
+test("Multiple", async () => {
+    expect.assertions(8);
+    const response = await nodeFetch("http://localhost:4500/parameters/multiple", {
+        method: HttpMethod.POST,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer this-is-an-encoded-jwt-token",
+        },
+        body: JSON.stringify(testWidget),
+    });
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
