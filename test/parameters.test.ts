@@ -75,14 +75,39 @@ beforeAll((done) => {
             return {testHeader: testHeader};
         }
 
-        @Route(HttpMethod.GET, "/param/:id")
-        getParam(@Param("id") id: number): Record<string, number> {
+        @Route(HttpMethod.GET, "/param-number/:id")
+        getParamNumber(@Param("id") id: number): Record<string, number> {
             expect(typeof id).toEqual("number");
             return {testParam: id};
         }
 
-        @Route(HttpMethod.POST, "/query-param")
-        postQueryParam(@QueryParam("testParam") testParam: string) {
+        @Route(HttpMethod.GET, "/param-string/:id")
+        getParamString(@Param("id") id: string): Record<string, string> {
+            expect(typeof id).toEqual("string");
+            return {testParam: id};
+        }
+
+        @Route(HttpMethod.GET, "/param-boolean/:id")
+        getParamBoolean(@Param("id") id: boolean): Record<string, boolean> {
+            expect(typeof id).toEqual("boolean");
+            return {testParam: id};
+        }
+
+        @Route(HttpMethod.POST, "/query-param-number")
+        postQueryParamNumber(@QueryParam("testParam") testParam: number) {
+            expect(typeof testParam).toEqual("number");
+            return {testParam: testParam};
+        }
+
+        @Route(HttpMethod.POST, "/query-param-string")
+        postQueryParamString(@QueryParam("testParam") testParam: string) {
+            expect(typeof testParam).toEqual("string");
+            return {testParam: testParam};
+        }
+
+        @Route(HttpMethod.POST, "/query-param-boolean")
+        postQueryParamBoolean(@QueryParam("testParam") testParam: boolean) {
+            expect(typeof testParam).toEqual("boolean");
             return {testParam: testParam};
         }
 
@@ -179,25 +204,67 @@ test("@HeaderParam", async () => {
     expect(result).toEqual({"testHeader": "this-is-a-test-header"});
 });
 
-test("@Param", async () => {
+test("@Param - number", async () => {
     expect.assertions(4);
-    const response = await nodeFetch("http://localhost:4500/parameters/param/17", {method: HttpMethod.GET});
+    const response = await nodeFetch("http://localhost:4500/parameters/param-number/17", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
     expect(result).toEqual({"testParam": 17});
 });
 
-test("@QueryParam", async () => {
-    expect.assertions(3);
-    const queryString = stringify({
-        testParam: "this is a test"
-    });
-    const response = await nodeFetch(`http://localhost:4500/parameters/query-param?${queryString}`, {method: HttpMethod.POST});
+test("@Param - string", async () => {
+    expect.assertions(4);
+    const response = await nodeFetch("http://localhost:4500/parameters/param-string/e120ba97-47bd-46fa-a53f-5aea6cd889da", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({testParam: "this is a test"});
+    expect(result).toEqual({"testParam": "e120ba97-47bd-46fa-a53f-5aea6cd889da"});
+});
+
+test("@Param - boolean", async () => {
+    expect.assertions(4);
+    const response = await nodeFetch("http://localhost:4500/parameters/param-boolean/true", {method: HttpMethod.GET});
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toEqual({"testParam": true});
+});
+
+test("@QueryParam - number", async () => {
+    expect.assertions(4);
+    const queryString = stringify({
+        testParam: 123
+    });
+    const response = await nodeFetch(`http://localhost:4500/parameters/query-param-number?${queryString}`, {method: HttpMethod.POST});
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toEqual({testParam: 123});
+});
+
+test("@QueryParam - string", async () => {
+    expect.assertions(4);
+    const queryString = stringify({
+        testParam: "e120ba97-47bd-46fa-a53f-5aea6cd889da"
+    });
+    const response = await nodeFetch(`http://localhost:4500/parameters/query-param-string?${queryString}`, {method: HttpMethod.POST});
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toEqual({testParam: "e120ba97-47bd-46fa-a53f-5aea6cd889da"});
+});
+
+test("@QueryParam - boolean", async () => {
+    expect.assertions(4);
+    const queryString = stringify({
+        testParam: true
+    });
+    const response = await nodeFetch(`http://localhost:4500/parameters/query-param-boolean?${queryString}`, {method: HttpMethod.POST});
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toEqual({testParam: true});
 });
 
 test("@Request", async () => {

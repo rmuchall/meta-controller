@@ -14,6 +14,7 @@ import cors from "cors";
 import {HttpStatus} from "http-status-ts";
 import {stripDuplicateSlashes} from "./utilities/string-utils";
 import {ErrorHandler} from "./utilities/handlers";
+import {convertToSimpleType} from "./utilities/convert";
 
 export abstract class MetaController {
     private static metadata: Record<string, Metadata> = {};
@@ -243,13 +244,23 @@ export abstract class MetaController {
                     if (!request.params[context.parameters[0]]) {
                         throw new HttpError(HttpStatus.BAD_REQUEST, "Parameter does not exist");
                     }
-                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(JSON.parse(request.params[context.parameters[0]])));
+
+                    // Transform
+                    reflectedTypes = Reflect.getMetadata("design:paramtypes", context.target, context.propertyKey);
+                    transformedObject = convertToSimpleType(reflectedTypes[context.parameterIndex].name, request.params[context.parameters[0]]);
+
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(transformedObject));
                     break;
                 case ParameterType.QueryParam:
                     if (!request.query[context.parameters[0]]) {
                         throw new HttpError(HttpStatus.BAD_REQUEST, "Query parameter does not exist");
                     }
-                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(request.query[context.parameters[0]]));
+
+                    // Transform
+                    reflectedTypes = Reflect.getMetadata("design:paramtypes", context.target, context.propertyKey);
+                    transformedObject = convertToSimpleType(reflectedTypes[context.parameterIndex].name, request.query[context.parameters[0]]);
+
+                    parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(transformedObject));
                     break;
                 case ParameterType.Request:
                     parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(request));
