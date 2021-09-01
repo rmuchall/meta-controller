@@ -75,40 +75,52 @@ beforeAll((done) => {
             return {testHeader: testHeader};
         }
 
+        @Route(HttpMethod.GET, "/param-camel/:camelCasedId")
+        getParamCamel(@Param("camelCasedId") id: number): Record<string, number> {
+            expect(typeof id).toEqual("number");
+            return {camelCasedParam: id};
+        }
+
         @Route(HttpMethod.GET, "/param-number/:id")
         getParamNumber(@Param("id") id: number): Record<string, number> {
             expect(typeof id).toEqual("number");
-            return {testParam: id};
+            return {param: id};
         }
 
         @Route(HttpMethod.GET, "/param-string/:id")
         getParamString(@Param("id") id: string): Record<string, string> {
             expect(typeof id).toEqual("string");
-            return {testParam: id};
+            return {param: id};
         }
 
         @Route(HttpMethod.GET, "/param-boolean/:id")
         getParamBoolean(@Param("id") id: boolean): Record<string, boolean> {
             expect(typeof id).toEqual("boolean");
-            return {testParam: id};
+            return {param: id};
+        }
+
+        @Route(HttpMethod.POST, "/query-param-camel")
+        postQueryParamCamel(@QueryParam("camelCasedParam") camelCasedParam: number) {
+            expect(typeof camelCasedParam).toEqual("number");
+            return {camelCasedParam: camelCasedParam};
         }
 
         @Route(HttpMethod.POST, "/query-param-number")
-        postQueryParamNumber(@QueryParam("testParam") testParam: number) {
-            expect(typeof testParam).toEqual("number");
-            return {testParam: testParam};
+        postQueryParamNumber(@QueryParam("param") param: number) {
+            expect(typeof param).toEqual("number");
+            return {param: param};
         }
 
         @Route(HttpMethod.POST, "/query-param-string")
-        postQueryParamString(@QueryParam("testParam") testParam: string) {
-            expect(typeof testParam).toEqual("string");
-            return {testParam: testParam};
+        postQueryParamString(@QueryParam("param") param: string) {
+            expect(typeof param).toEqual("string");
+            return {param: param};
         }
 
         @Route(HttpMethod.POST, "/query-param-boolean")
-        postQueryParamBoolean(@QueryParam("testParam") testParam: boolean) {
-            expect(typeof testParam).toEqual("boolean");
-            return {testParam: testParam};
+        postQueryParamBoolean(@QueryParam("param") param: boolean) {
+            expect(typeof param).toEqual("boolean");
+            return {param: param};
         }
 
         @Route(HttpMethod.GET, "/request")
@@ -204,13 +216,22 @@ test("@HeaderParam", async () => {
     expect(result).toEqual({"testHeader": "this-is-a-test-header"});
 });
 
+test("@Param - camel case", async () => {
+    expect.assertions(4);
+    const response = await nodeFetch("http://localhost:4500/parameters/param-camel/17", {method: HttpMethod.GET});
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toEqual({"camelCasedParam": 17});
+});
+
 test("@Param - number", async () => {
     expect.assertions(4);
     const response = await nodeFetch("http://localhost:4500/parameters/param-number/17", {method: HttpMethod.GET});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({"testParam": 17});
+    expect(result).toEqual({"param": 17});
 });
 
 test("@Param - string", async () => {
@@ -219,7 +240,7 @@ test("@Param - string", async () => {
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({"testParam": "e120ba97-47bd-46fa-a53f-5aea6cd889da"});
+    expect(result).toEqual({"param": "e120ba97-47bd-46fa-a53f-5aea6cd889da"});
 });
 
 test("@Param - boolean", async () => {
@@ -228,43 +249,55 @@ test("@Param - boolean", async () => {
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({"testParam": true});
+    expect(result).toEqual({"param": true});
+});
+
+test("@QueryParam - camel case", async () => {
+    expect.assertions(4);
+    const queryString = stringify({
+        camelCasedParam: 123
+    });
+    const response = await nodeFetch(`http://localhost:4500/parameters/query-param-camel?${queryString}`, {method: HttpMethod.POST});
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toEqual({camelCasedParam: 123});
 });
 
 test("@QueryParam - number", async () => {
     expect.assertions(4);
     const queryString = stringify({
-        testParam: 123
+        param: 123
     });
     const response = await nodeFetch(`http://localhost:4500/parameters/query-param-number?${queryString}`, {method: HttpMethod.POST});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({testParam: 123});
+    expect(result).toEqual({param: 123});
 });
 
 test("@QueryParam - string", async () => {
     expect.assertions(4);
     const queryString = stringify({
-        testParam: "e120ba97-47bd-46fa-a53f-5aea6cd889da"
+        param: "e120ba97-47bd-46fa-a53f-5aea6cd889da"
     });
     const response = await nodeFetch(`http://localhost:4500/parameters/query-param-string?${queryString}`, {method: HttpMethod.POST});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({testParam: "e120ba97-47bd-46fa-a53f-5aea6cd889da"});
+    expect(result).toEqual({param: "e120ba97-47bd-46fa-a53f-5aea6cd889da"});
 });
 
 test("@QueryParam - boolean", async () => {
     expect.assertions(4);
     const queryString = stringify({
-        testParam: true
+        param: true
     });
     const response = await nodeFetch(`http://localhost:4500/parameters/query-param-boolean?${queryString}`, {method: HttpMethod.POST});
     expect(response.status).toEqual(HttpStatus.OK);
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({testParam: true});
+    expect(result).toEqual({param: true});
 });
 
 test("@Request", async () => {

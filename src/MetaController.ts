@@ -241,13 +241,13 @@ export abstract class MetaController {
                     parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(request.header(context.parameters[0])));
                     break;
                 case ParameterType.Param:
-                    if (!request.params[context.parameters[0]]) {
+                    if (!request.params[context.parameters[0].toLowerCase()]) {
                         throw new HttpError(HttpStatus.BAD_REQUEST, "Parameter does not exist");
                     }
 
                     // Transform
                     reflectedTypes = Reflect.getMetadata("design:paramtypes", context.target, context.propertyKey);
-                    transformedObject = convertToSimpleType(reflectedTypes[context.parameterIndex].name, request.params[context.parameters[0]]);
+                    transformedObject = convertToSimpleType(reflectedTypes[context.parameterIndex].name, request.params[context.parameters[0].toLowerCase()]);
 
                     parameterHandlers.splice(-Math.abs(context.parameterIndex), 0, Promise.resolve(transformedObject));
                     break;
