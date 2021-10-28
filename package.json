@@ -33,9 +33,9 @@
     "@types/cors": "2.8.12",
     "@types/express": "4.17.13",
     "@types/jest": "27.0.2",
-    "@types/node": "16.11.4",
-    "@typescript-eslint/eslint-plugin": "5.1.0",
-    "@typescript-eslint/parser": "5.1.0",
+    "@types/node": "16.11.6",
+    "@typescript-eslint/eslint-plugin": "5.2.0",
+    "@typescript-eslint/parser": "5.2.0",
     "cpy-cli": "3.1.1",
     "eslint": "8.1.0",
     "jest": "27.3.1",
@@ -50,7 +50,7 @@
     "express": "4.17.1",
     "http-status-ts": "0.0.10",
     "meta-transformer": "0.0.29",
-    "meta-validator": "0.0.51",
+    "meta-validator": "0.0.52",
     "reflect-metadata": "0.1.13"
   }
 }
