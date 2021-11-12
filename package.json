@@ -50,7 +50,7 @@
     "express": "4.17.1",
     "http-status-ts": "0.0.10",
     "meta-transformer": "0.0.30",
-    "meta-validator": "0.0.53",
+    "meta-validator": "0.0.54",
     "reflect-metadata": "0.1.13"
   }
 }
