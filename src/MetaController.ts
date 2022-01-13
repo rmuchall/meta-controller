@@ -15,6 +15,7 @@ import {HttpStatus} from "http-status-ts";
 import {stripDuplicateSlashes} from "./utilities/string-utils";
 import {ErrorHandler} from "./utilities/handlers";
 import {convertToSimpleType} from "./utilities/convert";
+import http from "http";
 
 export abstract class MetaController {
     private static metadata: Record<string, Metadata> = {};
@@ -26,9 +27,19 @@ export abstract class MetaController {
             MetaController.controllers[classType.name] = new classType();
         }
 
+        // Add rawBody to request
+        const rawBodySaver = function(req: http.IncomingMessage, res: http.ServerResponse, buf: Buffer, encoding: string) {
+            (req as any).rawBody = buf;
+        };
+
         // Set options
         MetaController.options = options;
-        expressApp.use(express.json());
+        // verify is only called if the request contains a body
+        expressApp.use(express.json({verify: options.isSaveRawBody ? rawBodySaver : undefined}));
+
+        // Add other parsers?
+        // expressApp.use(express.urlencoded({ verify: rawBodySaver, extended: true }));
+        // expressApp.use(express.raw({ verify: rawBodySaver, type: "*/*" }));
 
         if (options.isUseCors) {
             expressApp.use(cors());

@@ -5,6 +5,7 @@ export interface Options {
     isDebug?: boolean;
     routePrefix?: string;
     isUseCors?: boolean;
+    isSaveRawBody?: boolean;
     controllerClassTypes: ClassType[];
     authorizationHandler?: AuthorizationHandler;
     currentUserHandler?: CurrentUserHandler;

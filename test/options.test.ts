@@ -41,16 +41,26 @@ beforeAll((done) => {
                 custom: (request as any).customProperty
             };
         }
+
+        @Route(HttpMethod.POST, "/raw-body")
+        testRawBody(@Request() request: express.Request): Record<string, any> {
+            expect((request as any).rawBody).toBeDefined();
+            return {
+                isSuccess: true
+            };
+        }
     }
 
     expressApp = express();
     MetaController.useExpressServer(expressApp, {
         routePrefix: "api",
         isUseCors: true,
+        isSaveRawBody: true,
         controllerClassTypes: [
             WidgetController
         ],
         customErrorHandler: (error, request, response, next) => {
+            // console.error(error);
             response.status(500).send({customErrorHandler: true});
         },
         globalMiddleware: [
@@ -93,4 +103,17 @@ test("global middleware", async () => {
     expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
     const result: any = await response.json();
     expect(result.custom).toEqual("from global middleware");
+});
+
+test("raw body", async () => {
+    const response = await nodeFetch("http://localhost:4500/api/options/raw-body", {
+        method: HttpMethod.POST,
+        body: JSON.stringify({test: "this is a test"}),
+        // raw body is only saved for json requests (because it uses express.json.verify)
+        headers: {"content-type": "application/json; charset=utf-8"}
+    });
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json() as Record<string, any>;
+    expect(result["isSuccess"]).toBeTruthy();
 });
