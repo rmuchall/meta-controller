@@ -9,7 +9,7 @@ Install the [meta-controller package](https://www.npmjs.com/package/meta-control
 `npm install meta-controller`
 
 ## Basic Usage
-Create a REST API controller by using the `JsonController(<route>)` decorator and define routes by using the `@Route(<http method>, <path>)` decorator.<br/> Routes can be synchronous or asynchronous. Route paramaters are automatically transformed ([meta-transformer](https://www.npmjs.com/package/meta-transformer)) and validated ([meta-validator](https://www.npmjs.com/package/meta-validator)). <br/>
+Create a REST API controller by using the `JsonController(<route>)` decorator and define routes by using the `@Route(<http method>, <path>)` decorator. Routes can be synchronous or asynchronous. Route paramaters are automatically transformed ([meta-transformer](https://www.npmjs.com/package/meta-transformer)) and validated ([meta-validator](https://www.npmjs.com/package/meta-validator)). <br/>
 ```
 @JsonController("/basic")
 class WidgetController {
