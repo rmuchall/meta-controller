@@ -40,17 +40,17 @@ MetaController.useExpressServer(expressApp, {
 ```
 The following initialization options are available. <br/>
 
-| Option                                       | Description                                                                      | 
-|----------------------------------------------|----------------------------------------------------------------------------------|
-| isDebug?: boolean;                           | Log any errors to stdout                                                         |
-| routePrefix?: string;                        | Add a global route prefix (e.g. /api)                                            | 
-| isUseCors?: boolean;                         | Add CORS to all routes                                                           |
-| isSaveRawBody?: boolean;                     | Add the raw body to the request object (request.rawBody)                         |
-| controllerClassTypes: ClassType[];           | An array of class controllers that will be added as express routes)              |
-| authorizationHandler?: AuthorizationHandler; | A user supplied function that determines if the request has been authorized      |
-| currentUserHandler?: CurrentUserHandler;     | A user supplied function that retrieves the user (if any) of the current request |
-| customErrorHandler?: ErrorHandler;           | A global custom error handler                                                    |
-| globalMiddleware?: MiddlewareHandler[];      | Any optional global middleware                                                   |
+| Option               | Description                                                                      | 
+|----------------------|----------------------------------------------------------------------------------|
+| isDebug              | Log any errors to stdout                                                         |
+| routePrefix          | Add a global route prefix (e.g. /api)                                            | 
+| isUseCors            | Add CORS to all routes                                                           |
+| isSaveRawBody        | Add the raw body to the request object (request.rawBody)                         |
+| controllerClassTypes | An array of class controllers that will be added as express routes)              |
+| authorizationHandler | A user supplied function that determines if the request has been authorized      |
+| currentUserHandler   | A user supplied function that retrieves the user (if any) of the current request |
+| customErrorHandler   | A global custom error handler                                                    |
+| globalMiddleware     | Any optional global middleware                                                   |
 
 ## Route Parameters
 Controllers may accept all standard REST type parameters. Parameters are automatically transformed or cast to the specified type.
