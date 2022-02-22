@@ -90,10 +90,10 @@ You can require authorization on a per-controller basis by specifying an `author
 ```
 const expressApp = express();
 MetaController.useExpressServer(expressApp, {
-    authorizationHandler: (request, response, roles): Promise<boolean> => {
+    authorizationHandler: (request, response, roles): boolean => {
         // ... business logic
         // Return true for authorized, false for unauthorized
-        return Promise.resolve(true);
+        return true;
     }
 });
 
@@ -108,18 +108,23 @@ class SecureController {
 ```
 If you also add a `currentUserHandler()` you can inject the current user using the `CurrentUser()` decorator. <br/>
 ```
+class User {
+    userName: string = "TestUser";
+}
+const testUser = new User();
+
 const expressApp = express();
 MetaController.useExpressServer(expressApp, {
-    authorizationHandler: (request, response, roles): Promise<boolean> => {
+    currentUserHandler: (request, response): User => {
         // ... business logic
-        // Return true for authorized, false for unauthorized
-        return Promise.resolve(true);
+        return testUser;
     }
 });
 
 @Route(HttpMethod.GET, "/current-user")
 getCurrentUser(@CurrentUser() currentUser: User): User {
     // ... business logic
+    return currentUser;
 }
 ```
 

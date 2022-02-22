@@ -4,8 +4,9 @@ import {MetaController} from "../src/MetaController";
 import {JsonController} from "../src/decorators/class/JsonController";
 import {Route} from "../src/decorators/property/Route";
 import {Authorize} from "../src/decorators/class/Authorize";
-import {HttpStatus, HttpMethod} from "http-status-ts";
+import {HttpMethod, HttpStatus} from "http-status-ts";
 import nodeFetch from "node-fetch";
+import {CurrentUser} from "../src/index";
 
 class Widget {
     name: string;
@@ -16,6 +17,12 @@ const testWidget: Widget = Object.assign<Widget, Widget>(new Widget(), {
     name: "Doodad",
     color: "Blue"
 });
+
+class User {
+    userName: string = "TestUser";
+}
+
+const testUser = new User();
 
 let expressApp: Application;
 let apiServer: HttpServer;
@@ -41,19 +48,31 @@ beforeAll((done) => {
         }
     }
 
+    @JsonController("/user")
+    class WidgetUserController {
+        @Route(HttpMethod.GET, "/current-user")
+        getUser(@CurrentUser() currentUser: User): User {
+            return currentUser;
+        }
+    }
+
     expressApp = express();
     MetaController.useExpressServer(expressApp, {
         isUseCors: true,
         controllerClassTypes: [
             WidgetAllowController,
-            WidgetDenyController
+            WidgetDenyController,
+            WidgetUserController
         ],
-        authorizationHandler: (request, response, roles): Promise<boolean> => {
+        authorizationHandler: (request, response, roles): boolean => {
             if (roles) {
-                return Promise.resolve(roles.includes("AllowRole"));
+                return roles.includes("AllowRole");
             }
 
-            return Promise.resolve(false);
+            return false;
+        },
+        currentUserHandler: (request, response) => {
+            return testUser;
         }
     });
     apiServer = http.createServer(expressApp);
@@ -83,4 +102,13 @@ test("unauthorized", async () => {
     expect(result.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     expect(result.message).toEqual("Unauthorized");
     expect(result.stack).toBeDefined();
+});
+
+test("current user", async () => {
+    expect.assertions(3);
+    const response = await nodeFetch("http://localhost:4500/user/current-user", {method: HttpMethod.GET});
+    expect(response.status).toEqual(HttpStatus.OK);
+    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    const result = await response.json();
+    expect(result).toEqual(testUser);
 });
