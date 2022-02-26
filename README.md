@@ -10,7 +10,7 @@ Install the [meta-controller package](https://www.npmjs.com/package/meta-control
 
 ## Basic Usage
 Create a REST API controller by using the `JsonController(<route>)` decorator and define routes by using the `@Route(<http method>, <path>)` decorator. Routes can be synchronous or asynchronous. Route paramaters are automatically transformed ([meta-transformer](https://www.npmjs.com/package/meta-transformer)) and validated ([meta-validator](https://www.npmjs.com/package/meta-validator)). <br/>
-```
+```typescript
 @JsonController("/basic")
 class WidgetController {
     @Route(HttpMethod.GET)
@@ -32,7 +32,7 @@ apiServer.listen(4500);
 
 ## Initialization
 Pass an instance of [express](https://www.npmjs.com/package/express) to `MetaController.useExpressServer()` to initialize meta-controller. <br/>
-```
+```typescript
 const expressApp = express();
 MetaController.useExpressServer(expressApp, {
     // options
@@ -55,14 +55,14 @@ The following initialization options are available. <br/>
 ## Route Parameters
 Controllers may accept all standard REST type parameters. Parameters are automatically transformed or cast to the specified type.
 ### HTTP Request Body
-```
+```typescript
 @Route(HttpMethod.POST, "/body")
 myRoute(@Body() widget: Widget) {
     // ... business logic
 }
 ```
 ### Route Parameters
-```
+```typescript
 // Example: https://localhost/api/param/5
 @Route(HttpMethod.GET, "/param/:id")
 myRoute(@Param("id") id: number) {
@@ -70,7 +70,7 @@ myRoute(@Param("id") id: number) {
 }
 ```
 ### Route Query Parameters
-```
+```typescript
 // Example: https://localhost/api/query-param?myQueryParam=test
 @Route(HttpMethod.POST, "/query-param")
 myRoute(@QueryParam("myQueryParam") myQueryParam: string) {
@@ -78,7 +78,7 @@ myRoute(@QueryParam("myQueryParam") myQueryParam: string) {
 }
 ```
 ### HTTP Request Headers
-```
+```typescript
 @Route(HttpMethod.GET, "/header-param")
 myRoute(@HeaderParam("TestHeader") testHeader: string) {
     // ... business logic    
@@ -87,7 +87,7 @@ myRoute(@HeaderParam("TestHeader") testHeader: string) {
 
 ## Authorization
 You can require authorization on a per-controller basis by specifying an `authorizationHandler()` and using the `@Authorization()` decorator. <br/>
-```
+```typescript
 const expressApp = express();
 MetaController.useExpressServer(expressApp, {
     authorizationHandler: (request, response, roles): boolean => {
@@ -107,7 +107,7 @@ class SecureController {
 }
 ```
 If you also add a `currentUserHandler()` you can inject the current user using the `CurrentUser()` decorator. <br/>
-```
+```typescript
 class User {
     userName: string = "TestUser";
 }
@@ -130,7 +130,7 @@ getCurrentUser(@CurrentUser() currentUser: User): User {
 
 ## Error Handling
 You can throw errors along with associated [HTTP error codes](https://github.com/rmuchall/http-status-ts). <br/>
-```
+```typescript
 @Authorize(["Admin"])
 @JsonController("/secure")
 class SecureController {
@@ -142,7 +142,7 @@ class SecureController {
 ```
 
 If no HTTP error code is specified then meta-controller defaults to using HTTP status 500 (INTERNAL_SERVER_ERROR).<br />
-```
+```typescript
 @Route(HttpMethod.POST, "/body")
 myRoute(@Body() widget: Widget) {
     // Returns HTTP status 500 - INTERNAL_SERVER_ERROR
