@@ -1,6 +1,6 @@
 {
   "name": "meta-controller",
-  "version": "0.0.47",
+  "version": "0.0.48",
   "description": "meta-controller",
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
@@ -22,7 +22,9 @@
     "type": "git",
     "url": "git+https://github.com/rmuchall/meta-controller.git"
   },
-  "keywords": ["rest"],
+  "keywords": [
+    "rest"
+  ],
   "author": "Rob Muchall <rmuchall@protonmail.com>",
   "license": "MIT",
   "bugs": {
