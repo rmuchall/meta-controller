@@ -23,7 +23,7 @@
     "build:esm": "tsc --project tsconfig-release.json --module nodenext --target es2022 --outDir build/esm",
     "copy": "cpy ./package.json ./README.md ./LICENSE.md ./build",
     "postversion": "git push && git push --tags",
-    "release": "npm run lint && npm run test && npm run build && npm version major && npm run copy && npm publish ./build"
+    "release": "npm run lint && npm run test && npm run build && npm version patch && npm run copy && npm publish ./build"
   },
   "tap": {
     "reporter": "terse",
