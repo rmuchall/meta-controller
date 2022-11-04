@@ -1,4 +1,4 @@
-import {ParameterType} from "../../enums/ParameterType";
+import {ParameterType} from "../../enums/ParameterType.js";
 
 export class ParameterContext {
     // Metadata

@@ -1,15 +1,15 @@
+import t from "tap";
 import express, {Application} from "express";
 import http, {Server as HttpServer} from "http";
-import {MetaController} from "../src/MetaController";
-import {JsonController} from "../src/decorators/class/JsonController";
-import {Route} from "../src/decorators/property/Route";
+import {MetaController} from "../src/MetaController.js";
+import {JsonController} from "../src/decorators/class/JsonController.js";
+import {Route} from "../src/decorators/property/Route.js";
 import {HttpStatus, HttpMethod} from "http-status-ts";
-import nodeFetch from "node-fetch";
 
 let expressApp: Application;
 let apiServer: HttpServer;
 
-beforeAll((done) => {
+t.before(() => {
     MetaController.clearMetadata();
 
     @JsonController("/this")
@@ -35,28 +35,25 @@ beforeAll((done) => {
         ]
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500, done);
+    apiServer.listen(4500);
 });
 
-afterAll(done => {
-    apiServer.close(done);
-    done();
+t.teardown(() => {
+    apiServer.close();
 });
 
-test("sync", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/this/sync", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("sync", async t => {
+    const response = await fetch("http://localhost:4500/this/sync", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({classProperty: "this is a class property"});
+    t.same(result, {classProperty: "this is a class property"});
 });
 
-test("async", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/this/async", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("async", async t => {
+    const response = await fetch("http://localhost:4500/this/async", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({classProperty: "this is a class property"});
+    t.same(result, {classProperty: "this is a class property"});
 });

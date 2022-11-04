@@ -1,6 +1,6 @@
-import {MetaController} from "../../MetaController";
-import {ParameterContext} from "../../models/contexts/ParameterContext";
-import {ParameterType} from "../../enums/ParameterType";
+import {MetaController} from "../../MetaController.js";
+import {ParameterContext} from "../../models/contexts/ParameterContext.js";
+import {ParameterType} from "../../enums/ParameterType.js";
 
 export function CurrentUser(): ParameterDecorator {
     return (target, propertyKey, parameterIndex) => {

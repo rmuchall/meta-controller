@@ -1,11 +1,11 @@
+import t from "tap";
 import express, {Application} from "express";
 import http, {Server as HttpServer} from "http";
-import {MetaController} from "../src/MetaController";
-import {JsonController} from "../src/decorators/class/JsonController";
-import {Route} from "../src/decorators/property/Route";
+import {MetaController} from "../src/MetaController.js";
+import {JsonController} from "../src/decorators/class/JsonController.js";
+import {Route} from "../src/decorators/property/Route.js";
 import {HttpStatus, HttpMethod} from "http-status-ts";
-import {Request} from "../src/decorators/parameter/Request";
-import nodeFetch from "node-fetch";
+import {Request} from "../src/decorators/parameter/Request.js";
 
 class Widget {
     name: string;
@@ -20,7 +20,7 @@ const testWidget: Widget = Object.assign<Widget, Widget>(new Widget(), {
 let expressApp: Application;
 let apiServer: HttpServer;
 
-beforeAll((done) => {
+t.before(() => {
     MetaController.clearMetadata();
 
     @JsonController("/options")
@@ -44,7 +44,7 @@ beforeAll((done) => {
 
         @Route(HttpMethod.POST, "/raw-body")
         testRawBody(@Request() request: express.Request): Record<string, any> {
-            expect((request as any).rawBody).toBeDefined();
+            t.not((request as any).rawBody, undefined);
             return {
                 isSuccess: true
             };
@@ -71,49 +71,46 @@ beforeAll((done) => {
         ]
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500, done);
+    apiServer.listen(4500);
 });
 
-afterAll(done => {
-    apiServer.close(done);
-    done();
+t.teardown(() => {
+    apiServer.close();
 });
 
-test("route prefix", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/api/options/route-prefix", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("route prefix", async t => {
+    const response = await fetch("http://localhost:4500/api/options/route-prefix", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual(testWidget);
+    t.same(result, testWidget);
 });
 
-test("custom error handler", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/api/options/error-handler", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("custom error handler", async t => {
+    const response = await fetch("http://localhost:4500/api/options/error-handler", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual({customErrorHandler: true});
+    t.same(result, {customErrorHandler: true});
 });
 
-test("global middleware", async () => {
-    const response = await nodeFetch("http://localhost:4500/api/options/global-middleware", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("global middleware", async t => {
+    const response = await fetch("http://localhost:4500/api/options/global-middleware", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
-    expect(result.custom).toEqual("from global middleware");
+    t.equal(result.custom, "from global middleware");
 });
 
-test("raw body", async () => {
-    const response = await nodeFetch("http://localhost:4500/api/options/raw-body", {
+void t.test("raw body", async t => {
+    const response = await fetch("http://localhost:4500/api/options/raw-body", {
         method: HttpMethod.POST,
         body: JSON.stringify({test: "this is a test"}),
         // raw body is only saved for json requests (because it uses express.json.verify)
         headers: {"content-type": "application/json; charset=utf-8"}
     });
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json() as Record<string, any>;
-    expect(result["isSuccess"]).toBeTruthy();
+    t.ok(result["isSuccess"]);
 });

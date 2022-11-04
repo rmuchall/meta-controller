@@ -1,4 +1,4 @@
-import {AuthorizationHandler, CurrentUserHandler, ErrorHandler, MiddlewareHandler} from "../utilities/handlers";
+import {AuthorizationHandler, CurrentUserHandler, ErrorHandler, MiddlewareHandler} from "../utilities/handlers.js";
 import {ClassType} from "meta-transformer";
 
 export interface Options {

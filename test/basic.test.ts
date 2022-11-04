@@ -1,10 +1,10 @@
+import t from "tap";
 import express, {Application} from "express";
 import http, {Server as HttpServer} from "http";
-import {MetaController} from "../src/MetaController";
-import {JsonController} from "../src/decorators/class/JsonController";
-import {Route} from "../src/decorators/property/Route";
+import {MetaController} from "../src/MetaController.js";
+import {JsonController} from "../src/decorators/class/JsonController.js";
+import {Route} from "../src/decorators/property/Route.js";
 import {HttpStatus, HttpMethod} from "http-status-ts";
-import nodeFetch from "node-fetch";
 
 class Widget {
     name: string;
@@ -19,7 +19,7 @@ const testWidget: Widget = Object.assign<Widget, Widget>(new Widget(), {
 let expressApp: Application;
 let apiServer: HttpServer;
 
-beforeAll((done) => {
+t.before(() => {
     MetaController.clearMetadata();
 
     @JsonController("/basic")
@@ -53,46 +53,41 @@ beforeAll((done) => {
         ]
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500, done);
+    apiServer.listen(4500);
 });
 
-afterAll(done => {
-    apiServer.close(done);
-    done();
+t.teardown(() => {
+    apiServer.close();
 });
 
-test("get no path", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/basic", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("get no path", async t => {
+    const response = await fetch("http://localhost:4500/basic", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual(testWidget);
+    t.same(result, testWidget);
 });
 
-test("get with path", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/basic/with-path", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("get with path", async t => {
+    const response = await fetch("http://localhost:4500/basic/with-path", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual(testWidget);
+    t.same(result, testWidget);
 });
 
-test("post no path", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/basic", {method: HttpMethod.POST});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("post no path", async t => {
+    const response = await fetch("http://localhost:4500/basic", {method: HttpMethod.POST});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual(testWidget);
+    t.same(result, testWidget);
 });
 
-test("post with path", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/basic/with-path", {method: HttpMethod.POST});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("post with path", async t => {
+    const response = await fetch("http://localhost:4500/basic/with-path", {method: HttpMethod.POST});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual(testWidget);
+    t.same(result, testWidget);
 });

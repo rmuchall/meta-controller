@@ -1,5 +1,5 @@
-import {MetaController} from "../../MetaController";
-import {AuthorizationContext} from "../../models/contexts/AuthorizationContext";
+import {MetaController} from "../../MetaController.js";
+import {AuthorizationContext} from "../../models/contexts/AuthorizationContext.js";
 
 export function Authorize(roles?: string[]): ClassDecorator {
     return target => {

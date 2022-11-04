@@ -1,5 +1,5 @@
-import {MetaController} from "../../MetaController";
-import {RouteContext} from "../../models/contexts/RouteContext";
+import {MetaController} from "../../MetaController.js";
+import {RouteContext} from "../../models/contexts/RouteContext.js";
 import {HttpMethod} from "http-status-ts";
 
 export function Route(httpMethod: HttpMethod, path?: string): PropertyDecorator {

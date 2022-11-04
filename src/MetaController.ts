@@ -1,20 +1,20 @@
 import "reflect-metadata";
-import {ControllerContext} from "./models/contexts/ControllerContext";
-import {RouteContext} from "./models/contexts/RouteContext";
-import {Metadata} from "./models/Metadata";
-import {Options} from "./interfaces/Options";
-import {AuthorizationContext} from "./models/contexts/AuthorizationContext";
+import {ControllerContext} from "./models/contexts/ControllerContext.js";
+import {RouteContext} from "./models/contexts/RouteContext.js";
+import {Metadata} from "./models/Metadata.js";
+import {Options} from "./interfaces/Options.js";
+import {AuthorizationContext} from "./models/contexts/AuthorizationContext.js";
 import express, {Application} from "express";
-import {ParameterContext} from "./models/contexts/ParameterContext";
-import {ParameterType} from "./enums/ParameterType";
+import {ParameterContext} from "./models/contexts/ParameterContext.js";
+import {ParameterType} from "./enums/ParameterType.js";
 import {ClassType, MetaTransformer} from "meta-transformer";
 import {MetaValidator, ValidationErrors} from "meta-validator";
-import {HttpError} from "./models/HttpError";
+import {HttpError} from "./models/HttpError.js";
 import cors from "cors";
 import {HttpStatus} from "http-status-ts";
-import {stripDuplicateSlashes} from "./utilities/string-utils";
-import {ErrorHandler} from "./utilities/handlers";
-import {convertToSimpleType} from "./utilities/convert";
+import {stripDuplicateSlashes} from "./utilities/string-utils.js";
+import {ErrorHandler} from "./utilities/handlers.js";
+import {convertToSimpleType} from "./utilities/convert.js";
 import http from "http";
 
 export abstract class MetaController {

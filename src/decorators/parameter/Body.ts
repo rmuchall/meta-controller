@@ -1,6 +1,6 @@
-import {MetaController} from "../../MetaController";
-import {ParameterContext} from "../../models/contexts/ParameterContext";
-import {ParameterType} from "../../enums/ParameterType";
+import {MetaController} from "../../MetaController.js";
+import {ParameterContext} from "../../models/contexts/ParameterContext.js";
+import {ParameterType} from "../../enums/ParameterType.js";
 
 // Body param must be a complex type
 export function Body(): ParameterDecorator {

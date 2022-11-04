@@ -17,8 +17,7 @@ module.exports = {
         "@typescript-eslint"
     ],
     ignorePatterns: [
-        ".eslintrc.js",
-        "jest.config.js"
+        ".eslintrc.js"
     ],
     rules: {
         // Style - Enable

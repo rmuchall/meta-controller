@@ -1,12 +1,12 @@
+import t from "tap";
 import express, {Application} from "express";
 import http, {Server as HttpServer} from "http";
-import {MetaController} from "../src/MetaController";
-import {JsonController} from "../src/decorators/class/JsonController";
-import {Route} from "../src/decorators/property/Route";
-import {Authorize} from "../src/decorators/class/Authorize";
+import {MetaController} from "../src/MetaController.js";
+import {JsonController} from "../src/decorators/class/JsonController.js";
+import {Route} from "../src/decorators/property/Route.js";
+import {Authorize} from "../src/decorators/class/Authorize.js";
 import {HttpMethod, HttpStatus} from "http-status-ts";
-import nodeFetch from "node-fetch";
-import {CurrentUser} from "../src/index";
+import {CurrentUser} from "../src/index.js";
 
 class Widget {
     name: string;
@@ -27,7 +27,7 @@ const testUser = new User();
 let expressApp: Application;
 let apiServer: HttpServer;
 
-beforeAll((done) => {
+t.before(() => {
     MetaController.clearMetadata();
 
     @Authorize(["AllowRole"])
@@ -76,39 +76,35 @@ beforeAll((done) => {
         }
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500, done);
+    apiServer.listen(4500);
 });
 
-afterAll(done => {
+t.teardown(() => {
     apiServer.close();
-    done();
 });
 
-test("authorized", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/authorization/authorized", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("authorized", async t => {
+    const response = await fetch("http://localhost:4500/authorization/authorized", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual(testWidget);
+    t.same(result, testWidget);
 });
 
-test("unauthorized", async () => {
-    expect.assertions(5);
-    const response = await nodeFetch("http://localhost:4500/authorization/unauthorized", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.UNAUTHORIZED);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("unauthorized", async t => {
+    const response = await fetch("http://localhost:4500/authorization/unauthorized", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.UNAUTHORIZED);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
-    expect(result.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
-    expect(result.message).toEqual("Unauthorized");
-    expect(result.stack).toBeDefined();
+    t.equal(result.statusCode, HttpStatus.UNAUTHORIZED);
+    t.equal(result.message, "Unauthorized");
+    t.not(result.stack, undefined);
 });
 
-test("current user", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/user/current-user", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("current user", async t => {
+    const response = await fetch("http://localhost:4500/user/current-user", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.OK);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
-    expect(result).toEqual(testUser);
+    t.same(result, testUser);
 });

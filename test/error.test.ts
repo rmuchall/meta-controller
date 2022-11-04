@@ -1,17 +1,17 @@
+import t from "tap";
 import express, {Application} from "express";
 import http, {Server as HttpServer} from "http";
-import {MetaController} from "../src/MetaController";
-import {JsonController} from "../src/decorators/class/JsonController";
-import {Route} from "../src/decorators/property/Route";
-import {Body} from "../src/decorators/parameter/Body";
+import {MetaController} from "../src/MetaController.js";
+import {JsonController} from "../src/decorators/class/JsonController.js";
+import {Route} from "../src/decorators/property/Route.js";
+import {Body} from "../src/decorators/parameter/Body.js";
 import {HttpStatus, HttpMethod} from "http-status-ts";
-import {HttpError} from "../src/models/HttpError";
-import nodeFetch from "node-fetch";
+import {HttpError} from "../src/models/HttpError.js";
 
 let expressApp: Application;
 let apiServer: HttpServer;
 
-beforeAll((done) => {
+t.before(() => {
     MetaController.clearMetadata();
 
     @JsonController("/error")
@@ -54,76 +54,69 @@ beforeAll((done) => {
         ]
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500, done);
+    apiServer.listen(4500);
 });
 
-afterAll(done => {
+t.teardown(() => {
     apiServer.close();
-    done();
 });
 
-test("bad path", async () => {
-    expect.assertions(3);
-    const response = await nodeFetch("http://localhost:4500/error/bad-path", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.NOT_FOUND);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("bad path", async t => {
+    const response = await fetch("http://localhost:4500/error/bad-path", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.NOT_FOUND);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
-    expect(result.message).toEqual("Route not found");
+    t.equal(result.message, "Route not found");
 });
 
-test("sync from nodejs", async () => {
-    expect.assertions(4);
-    const response = await nodeFetch("http://localhost:4500/error/throw-sync-nodejs", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("sync from nodejs", async t => {
+    const response = await fetch("http://localhost:4500/error/throw-sync-nodejs", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
-    expect(result.message).toEqual("sync error from nodejs");
-    expect(result.stack).toBeDefined();
+    t.equal(result.message, "sync error from nodejs");
+    t.not(result.stack, undefined);
 });
 
-test("async from nodejs", async () => {
-    expect.assertions(4);
-    const response = await nodeFetch("http://localhost:4500/error/throw-async-nodejs", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.INTERNAL_SERVER_ERROR);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("async from nodejs", async t => {
+    const response = await fetch("http://localhost:4500/error/throw-async-nodejs", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
-    expect(result.message).toEqual("async error from nodejs");
-    expect(result.stack).toBeDefined();
+    t.equal(result.message, "async error from nodejs");
+    t.not(result.stack, undefined);
 });
 
-test("sync from meta-controller", async () => {
-    expect.assertions(5);
-    const response = await nodeFetch("http://localhost:4500/error/throw-sync-meta", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("sync from meta-controller", async t => {
+    const response = await fetch("http://localhost:4500/error/throw-sync-meta", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.BAD_REQUEST);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
-    expect(result.statusCode).toEqual(HttpStatus.BAD_REQUEST);
-    expect(result.message).toEqual("sync error from meta-controller");
-    expect(result.stack).toBeDefined();
+    t.equal(result.statusCode, HttpStatus.BAD_REQUEST);
+    t.equal(result.message, "sync error from meta-controller");
+    t.not(result.stack, undefined);
 });
 
-test("async from meta-controller", async () => {
-    expect.assertions(5);
-    const response = await nodeFetch("http://localhost:4500/error/throw-async-meta", {method: HttpMethod.GET});
-    expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+void t.test("async from meta-controller", async t => {
+    const response = await fetch("http://localhost:4500/error/throw-async-meta", {method: HttpMethod.GET});
+    t.equal(response.status, HttpStatus.BAD_REQUEST);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
-    expect(result.statusCode).toEqual(HttpStatus.BAD_REQUEST);
-    expect(result.message).toEqual("async error from meta-controller");
-    expect(result.stack).toBeDefined();
+    t.equal(result.statusCode, HttpStatus.BAD_REQUEST);
+    t.equal(result.message, "async error from meta-controller");
+    t.not(result.stack, undefined);
 });
 
-test("bodyParser", async () => {
-    expect.assertions(5);
-    const response = await nodeFetch("http://localhost:4500/error/body-parser", {
+void t.test("bodyParser", async t => {
+    const response = await fetch("http://localhost:4500/error/body-parser", {
         method: "POST",
         body: "this is a test string",
         headers: {"Content-Type": "application/json"}
     });
-    expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
-    expect(response.headers.get("content-type")).toEqual("application/json; charset=utf-8");
+    t.equal(response.status, HttpStatus.BAD_REQUEST);
+    t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
-    expect(result.statusCode).toEqual(HttpStatus.BAD_REQUEST);
-    expect(result.message).toEqual("Unexpected token t in JSON at position 0");
-    expect(result.stack).toBeDefined();
+    t.equal(result.statusCode, HttpStatus.BAD_REQUEST);
+    t.equal(result.message, "Unexpected token t in JSON at position 0");
+    t.not(result.stack, undefined);
 });

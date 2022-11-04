@@ -1,5 +1,5 @@
-import {MetaController} from "../../MetaController";
-import {ControllerContext} from "../../models/contexts/ControllerContext";
+import {MetaController} from "../../MetaController.js";
+import {ControllerContext} from "../../models/contexts/ControllerContext.js";
 
 export function JsonController(baseRoute: string): ClassDecorator {
     return target => {
