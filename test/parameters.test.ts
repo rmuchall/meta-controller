@@ -156,7 +156,7 @@ t.before(() => {
         }
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500);
+    apiServer.listen(4505);
 });
 
 t.teardown(() => {
@@ -164,7 +164,7 @@ t.teardown(() => {
 });
 
 void t.test("@Body", async t => {
-    const response = await fetch("http://localhost:4500/parameters/body", {
+    const response = await fetch("http://localhost:4505/parameters/body", {
         method: HttpMethod.POST,
         headers: {
             "Content-Type": "application/json"
@@ -178,7 +178,7 @@ void t.test("@Body", async t => {
 });
 
 void t.test("@CurrentUser", async t => {
-    const response = await fetch("http://localhost:4500/parameters/current-user", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4505/parameters/current-user", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -186,7 +186,7 @@ void t.test("@CurrentUser", async t => {
 });
 
 void t.test("@EncodedJwtToken", async t => {
-    const response = await fetch("http://localhost:4500/parameters/encoded-jwt-token", {
+    const response = await fetch("http://localhost:4505/parameters/encoded-jwt-token", {
         method: HttpMethod.GET,
         headers: {
             Authorization: "Bearer this-is-an-encoded-jwt-token"
@@ -199,7 +199,7 @@ void t.test("@EncodedJwtToken", async t => {
 });
 
 void t.test("@HeaderParam", async t => {
-    const response = await fetch("http://localhost:4500/parameters/header-param", {
+    const response = await fetch("http://localhost:4505/parameters/header-param", {
         method: HttpMethod.GET,
         headers: {
             TestHeader: "this-is-a-test-header"
@@ -212,7 +212,7 @@ void t.test("@HeaderParam", async t => {
 });
 
 void t.test("@Param - camel case", async t => {
-    const response = await fetch("http://localhost:4500/parameters/param-camel/17", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4505/parameters/param-camel/17", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -220,7 +220,7 @@ void t.test("@Param - camel case", async t => {
 });
 
 void t.test("@Param - number", async t => {
-    const response = await fetch("http://localhost:4500/parameters/param-number/17", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4505/parameters/param-number/17", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -228,7 +228,7 @@ void t.test("@Param - number", async t => {
 });
 
 void t.test("@Param - string", async t => {
-    const response = await fetch("http://localhost:4500/parameters/param-string/e120ba97-47bd-46fa-a53f-5aea6cd889da", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4505/parameters/param-string/e120ba97-47bd-46fa-a53f-5aea6cd889da", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -236,7 +236,7 @@ void t.test("@Param - string", async t => {
 });
 
 void t.test("@Param - boolean", async t => {
-    const response = await fetch("http://localhost:4500/parameters/param-boolean/true", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4505/parameters/param-boolean/true", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -247,7 +247,7 @@ void t.test("@QueryParam - camel case", async t => {
     const queryString = stringify({
         camelCasedParam: 123
     });
-    const response = await fetch(`http://localhost:4500/parameters/query-param-camel?${queryString}`, {method: HttpMethod.POST});
+    const response = await fetch(`http://localhost:4505/parameters/query-param-camel?${queryString}`, {method: HttpMethod.POST});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -258,7 +258,7 @@ void t.test("@QueryParam - number", async t => {
     const queryString = stringify({
         param: 123
     });
-    const response = await fetch(`http://localhost:4500/parameters/query-param-number?${queryString}`, {method: HttpMethod.POST});
+    const response = await fetch(`http://localhost:4505/parameters/query-param-number?${queryString}`, {method: HttpMethod.POST});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -269,7 +269,7 @@ void t.test("@QueryParam - string", async t => {
     const queryString = stringify({
         param: "e120ba97-47bd-46fa-a53f-5aea6cd889da"
     });
-    const response = await fetch(`http://localhost:4500/parameters/query-param-string?${queryString}`, {method: HttpMethod.POST});
+    const response = await fetch(`http://localhost:4505/parameters/query-param-string?${queryString}`, {method: HttpMethod.POST});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -280,7 +280,7 @@ void t.test("@QueryParam - boolean", async t => {
     const queryString = stringify({
         param: true
     });
-    const response = await fetch(`http://localhost:4500/parameters/query-param-boolean?${queryString}`, {method: HttpMethod.POST});
+    const response = await fetch(`http://localhost:4505/parameters/query-param-boolean?${queryString}`, {method: HttpMethod.POST});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -288,7 +288,7 @@ void t.test("@QueryParam - boolean", async t => {
 });
 
 void t.test("@Request", async t => {
-    const response = await fetch("http://localhost:4500/parameters/request", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4505/parameters/request", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -296,7 +296,7 @@ void t.test("@Request", async t => {
 });
 
 void t.test("@Response", async t => {
-    const response = await fetch("http://localhost:4500/parameters/response", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4505/parameters/response", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -304,7 +304,7 @@ void t.test("@Response", async t => {
 });
 
 void t.test("Multiple", async t => {
-    const response = await fetch("http://localhost:4500/parameters/multiple", {
+    const response = await fetch("http://localhost:4505/parameters/multiple", {
         method: HttpMethod.POST,
         headers: {
             "Content-Type": "application/json",

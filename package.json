@@ -33,8 +33,7 @@
     ],
     "coverage": false,
     "bail": true,
-    "only": false,
-    "jobs": 1
+    "only": false
   },
   "repository": {
     "type": "git",

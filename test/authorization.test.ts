@@ -76,7 +76,7 @@ t.before(() => {
         }
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500);
+    apiServer.listen(4501);
 });
 
 t.teardown(() => {
@@ -84,7 +84,7 @@ t.teardown(() => {
 });
 
 void t.test("authorized", async t => {
-    const response = await fetch("http://localhost:4500/authorization/authorized", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4501/authorization/authorized", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -92,7 +92,7 @@ void t.test("authorized", async t => {
 });
 
 void t.test("unauthorized", async t => {
-    const response = await fetch("http://localhost:4500/authorization/unauthorized", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4501/authorization/unauthorized", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.UNAUTHORIZED);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
@@ -102,7 +102,7 @@ void t.test("unauthorized", async t => {
 });
 
 void t.test("current user", async t => {
-    const response = await fetch("http://localhost:4500/user/current-user", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4501/user/current-user", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();

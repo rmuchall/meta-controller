@@ -53,7 +53,7 @@ t.before(() => {
         ]
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500);
+    apiServer.listen(4502);
 });
 
 t.teardown(() => {
@@ -61,7 +61,7 @@ t.teardown(() => {
 });
 
 void t.test("get no path", async t => {
-    const response = await fetch("http://localhost:4500/basic", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4502/basic", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -69,7 +69,7 @@ void t.test("get no path", async t => {
 });
 
 void t.test("get with path", async t => {
-    const response = await fetch("http://localhost:4500/basic/with-path", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4502/basic/with-path", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -77,7 +77,7 @@ void t.test("get with path", async t => {
 });
 
 void t.test("post no path", async t => {
-    const response = await fetch("http://localhost:4500/basic", {method: HttpMethod.POST});
+    const response = await fetch("http://localhost:4502/basic", {method: HttpMethod.POST});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -85,7 +85,7 @@ void t.test("post no path", async t => {
 });
 
 void t.test("post with path", async t => {
-    const response = await fetch("http://localhost:4500/basic/with-path", {method: HttpMethod.POST});
+    const response = await fetch("http://localhost:4502/basic/with-path", {method: HttpMethod.POST});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();

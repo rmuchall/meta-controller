@@ -35,7 +35,7 @@ t.before(() => {
         ]
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500);
+    apiServer.listen(4506);
 });
 
 t.teardown(() => {
@@ -43,7 +43,7 @@ t.teardown(() => {
 });
 
 void t.test("sync", async t => {
-    const response = await fetch("http://localhost:4500/this/sync", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4506/this/sync", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -51,7 +51,7 @@ void t.test("sync", async t => {
 });
 
 void t.test("async", async t => {
-    const response = await fetch("http://localhost:4500/this/async", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4506/this/async", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();

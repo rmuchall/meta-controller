@@ -54,7 +54,7 @@ t.before(() => {
         ]
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500);
+    apiServer.listen(4503);
 });
 
 t.teardown(() => {
@@ -62,7 +62,7 @@ t.teardown(() => {
 });
 
 void t.test("bad path", async t => {
-    const response = await fetch("http://localhost:4500/error/bad-path", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4503/error/bad-path", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.NOT_FOUND);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
@@ -70,7 +70,7 @@ void t.test("bad path", async t => {
 });
 
 void t.test("sync from nodejs", async t => {
-    const response = await fetch("http://localhost:4500/error/throw-sync-nodejs", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4503/error/throw-sync-nodejs", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
@@ -79,7 +79,7 @@ void t.test("sync from nodejs", async t => {
 });
 
 void t.test("async from nodejs", async t => {
-    const response = await fetch("http://localhost:4500/error/throw-async-nodejs", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4503/error/throw-async-nodejs", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
@@ -88,7 +88,7 @@ void t.test("async from nodejs", async t => {
 });
 
 void t.test("sync from meta-controller", async t => {
-    const response = await fetch("http://localhost:4500/error/throw-sync-meta", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4503/error/throw-sync-meta", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.BAD_REQUEST);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
@@ -98,7 +98,7 @@ void t.test("sync from meta-controller", async t => {
 });
 
 void t.test("async from meta-controller", async t => {
-    const response = await fetch("http://localhost:4500/error/throw-async-meta", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4503/error/throw-async-meta", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.BAD_REQUEST);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
@@ -108,7 +108,7 @@ void t.test("async from meta-controller", async t => {
 });
 
 void t.test("bodyParser", async t => {
-    const response = await fetch("http://localhost:4500/error/body-parser", {
+    const response = await fetch("http://localhost:4503/error/body-parser", {
         method: "POST",
         body: "this is a test string",
         headers: {"Content-Type": "application/json"}

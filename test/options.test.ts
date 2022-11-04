@@ -71,7 +71,7 @@ t.before(() => {
         ]
     });
     apiServer = http.createServer(expressApp);
-    apiServer.listen(4500);
+    apiServer.listen(4504);
 });
 
 t.teardown(() => {
@@ -79,7 +79,7 @@ t.teardown(() => {
 });
 
 void t.test("route prefix", async t => {
-    const response = await fetch("http://localhost:4500/api/options/route-prefix", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4504/api/options/route-prefix", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -87,7 +87,7 @@ void t.test("route prefix", async t => {
 });
 
 void t.test("custom error handler", async t => {
-    const response = await fetch("http://localhost:4500/api/options/error-handler", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4504/api/options/error-handler", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.INTERNAL_SERVER_ERROR);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result = await response.json();
@@ -95,7 +95,7 @@ void t.test("custom error handler", async t => {
 });
 
 void t.test("global middleware", async t => {
-    const response = await fetch("http://localhost:4500/api/options/global-middleware", {method: HttpMethod.GET});
+    const response = await fetch("http://localhost:4504/api/options/global-middleware", {method: HttpMethod.GET});
     t.equal(response.status, HttpStatus.OK);
     t.equal(response.headers.get("content-type"), "application/json; charset=utf-8");
     const result: any = await response.json();
@@ -103,7 +103,7 @@ void t.test("global middleware", async t => {
 });
 
 void t.test("raw body", async t => {
-    const response = await fetch("http://localhost:4500/api/options/raw-body", {
+    const response = await fetch("http://localhost:4504/api/options/raw-body", {
         method: HttpMethod.POST,
         body: JSON.stringify({test: "this is a test"}),
         // raw body is only saved for json requests (because it uses express.json.verify)
