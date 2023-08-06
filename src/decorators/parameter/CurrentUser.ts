@@ -7,7 +7,7 @@ export function CurrentUser(): ParameterDecorator {
         MetaController.addMetadata(Object.assign<ParameterContext, ParameterContext>(new ParameterContext(), {
             // Metadata
             target: target,
-            propertyKey: propertyKey.toString(),
+            propertyKey: propertyKey ? propertyKey.toString() : "",
             parameterIndex: parameterIndex,
             // Context
             className: target.constructor.name,
